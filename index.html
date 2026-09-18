@@ -1,534 +1,1140 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ReportBuilder · MAC Sell-out</title>
-<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dashboard Sell-out — Versátil</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
-:root{
-  --brand-900:#4a0000; --brand-800:#7a0000; --brand:#e2001a; --brand-light:#ff3b3b;
-  --ink:#14233a; --muted:#7d8999; --line:#e5eaf0; --bg:#f3eef0; --card:#fff;
-  --accent:#e2001a;
-  --shadow:0 10px 30px rgba(122,0,0,.12);
-}
-*{box-sizing:border-box} body{margin:0;font-family:Inter,Segoe UI,Arial,sans-serif;background:var(--bg);color:var(--ink);overflow:hidden}
-button,input,select{font:inherit} button{cursor:pointer}
-.app{height:100vh;display:flex;flex-direction:column}
-.topbar{height:58px;background:linear-gradient(110deg,var(--brand-900),var(--brand-800));color:#fff;display:flex;align-items:center;gap:0;box-shadow:0 2px 12px #4a000030;z-index:5}
-.brand{width:205px;height:100%;display:flex;align-items:center;padding:0 18px;border-right:1px solid #ffffff18;font-weight:800;font-size:17px}
-.brandmark{width:25px;height:25px;border:2px solid #fff;border-radius:6px;margin-right:11px;display:grid;place-items:center;font-size:12px}
-.docname{padding:0 22px;font-size:14px;color:#fdeef0;display:flex;align-items:center;gap:9px}
-.top-actions{margin-left:auto;display:flex;align-items:center;gap:8px;padding-right:12px;position:relative}
-.topbtn{border:0;background:transparent;color:#fdeef0;padding:9px 13px;border-radius:7px;font-size:13px}
-.topbtn:hover{background:#ffffff18}.topbtn.primary{background:var(--brand);font-weight:700;padding:10px 17px}.topbtn.primary:hover{background:var(--brand-light)}
-.avatar{width:31px;height:31px;border-radius:50%;border:1px solid #ffffff45;display:grid;place-items:center;margin-left:4px}
-.body{flex:1;display:flex;min-height:0}
-.workspace{flex:1;min-width:0;display:flex;flex-direction:column}
-.toolbar{height:54px;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;padding:0 16px;gap:10px;position:relative}
-.select{height:34px;border:1px solid #dbe2ea;background:#fff;border-radius:6px;padding:0 10px;color:#33455d;font-size:12px}
-.zoom{display:flex;border:1px solid #dbe2ea;border-radius:6px;overflow:hidden;margin-left:8px}.zoom button{width:33px;height:32px;border:0;background:#fff;color:#627186}.zoom span{width:48px;display:grid;place-items:center;font-size:12px;border-left:1px solid #e5eaf0;border-right:1px solid #e5eaf0}
-.insertwrap{position:relative;margin-left:auto}
-.insertbtn{height:34px;border:1px solid var(--brand);background:#fff;color:var(--brand);border-radius:6px;padding:0 14px;font-size:12px;font-weight:700;display:flex;align-items:center;gap:6px}
-.insertbtn:hover{background:#fff1f1}
-.insertmenu{position:absolute;top:42px;right:0;background:#fff;border:1px solid var(--line);border-radius:10px;box-shadow:var(--shadow);width:230px;padding:8px;display:none;z-index:12}
-.insertmenu.show{display:block}
-.insertmenu .section-title{font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:#9aa6b3;padding:8px 8px 4px}
-.insertmenu .element{height:36px;display:flex;align-items:center;gap:10px;padding:0 8px;border-radius:6px;font-size:12px;color:#28405d}
-.insertmenu .element:hover{background:#fbecec}
-.insertmenu .element .ico{width:18px;text-align:center;font-size:15px;color:var(--brand)}
-.filterbar{min-height:48px;flex-shrink:0;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:9px;padding:0 16px;flex-wrap:nowrap;overflow:hidden}
-.filterbar .fbar-title{font-size:11px;font-weight:800;color:var(--brand-900);text-transform:uppercase;letter-spacing:.06em;display:flex;align-items:center;gap:6px;height:22px;padding-right:13px;margin-right:3px;border-right:1px solid var(--line);white-space:nowrap}
-.filterbar .fbar-title .ico{color:var(--brand);font-size:13px}
-.filterbar .flabel{font-size:10px;font-weight:800;color:#8a4b4b;text-transform:uppercase;letter-spacing:.05em;margin-right:2px;white-space:nowrap}
-.filterbar select{height:30px;border:1px solid #e6cdd0;border-radius:6px;padding:0 8px;font-size:11.5px;color:#3a1414;background:#fff;max-width:165px;min-width:0}
-.filterbar select:disabled{color:#b9a6a6;background:#f4eeee}
-.filterbar .clearf{border:0;background:none;color:var(--brand);font-size:11px;font-weight:700;padding:5px 6px;white-space:nowrap}
-.filterbar .clearf:hover{background:#fff1f1;border-radius:5px}
-.filterbar .stat{margin-left:auto;font-size:11px;color:#7a4747;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.filterbar .stat b{color:#3a1414}
-.canvas-area{flex:1;overflow:auto;padding:30px 24px 50px;display:flex;justify-content:center;align-items:flex-start}
-.page{width:960px;min-height:680px;background:#fff;box-shadow:0 5px 28px #4a000018;position:relative;padding:38px 30px 34px;transition:.2s;transform-origin:top center}
-.page-header{display:flex;justify-content:space-between;align-items:flex-start;position:relative}
-.title-wrap h1{font-size:26px;margin:0 0 9px;font-weight:800;letter-spacing:-.5px;color:#111}
-.subtitle{font-size:14px;font-weight:600;color:#171717}
-.accent{height:5px;background:linear-gradient(90deg,var(--brand),var(--brand-light) 42%,transparent);position:absolute;left:0;top:37px;width:74%;border-radius:4px}
-.logo{width:118px;height:auto;object-fit:contain;object-position:right top}
-.logo-fallback{font-size:37px;font-weight:900;color:var(--brand);line-height:1;display:none}
-.logo-fallback small{display:block;font-size:9px;color:#aaa;text-align:right;font-weight:500;margin-top:3px}
-.charts{margin-top:30px}
-.chart-card{text-align:center;min-width:0}
-.chart-title{font-size:20px;font-weight:800;color:#3a0d0d;margin:10px 0 5px}
-.chart-desc{font-size:11.5px;color:#a1878a;line-height:1.65;min-height:18px}
-.svgchart{width:100%;height:400px;display:block}
-.statusbar{height:45px;background:#fff;border-top:1px solid var(--line);display:flex;align-items:center;padding:0 17px;color:#7d8998;font-size:11px;gap:15px}
-.statusbar .dot{width:7px;height:7px;border-radius:50%;background:#28b87b}.statusbar .right{margin-left:auto}
-.inspector{width:315px;background:#fff;border-left:1px solid var(--line);overflow:auto;transition:.25s}
-.inspector.hidden{width:0;overflow:hidden;border-left:0}
-.inspect-tabs{height:48px;border-bottom:1px solid var(--line);display:flex;padding:0 16px}.inspect-tabs button{border:0;background:none;font-weight:700;font-size:12px;color:#77859a;padding:0 13px;position:relative}.inspect-tabs button.active{color:var(--brand-900)}.inspect-tabs button.active:after{content:"";position:absolute;height:2px;left:0;right:0;bottom:0;background:var(--brand)}
-.panel{padding:14px 17px;border-bottom:1px solid #edf0f4}.panel h3{font-size:12px;margin:0 0 13px;color:#3a0d0d;display:flex;align-items:center;justify-content:space-between}.field{margin-bottom:11px}.field label{display:block;font-size:10px;color:#77859a;margin-bottom:5px}.field input,.field select{width:100%;height:32px;border:1px solid #dce3eb;border-radius:5px;padding:0 9px;font-size:11px;color:#273c56}.row{display:grid;grid-template-columns:1fr 1fr;gap:8px}.switch{display:flex;align-items:center;justify-content:space-between;font-size:11px;color:#5e6e82;margin:10px 0}
-.toggle{width:34px;height:19px;border-radius:12px;background:#d2dae4;position:relative;outline-offset:2px}.toggle.on{background:var(--brand)}.toggle i{position:absolute;width:15px;height:15px;border-radius:50%;background:#fff;top:2px;left:2px;box-shadow:0 1px 3px #0002;transition:.2s}.toggle.on i{left:17px}
-.mini-btn{border:1px solid #dce3eb;background:#fff;border-radius:6px;padding:8px 10px;font-size:11px;width:100%;margin-top:4px;color:#3a0d0d}.mini-btn:hover{background:#fdf3f3}.mini-btn:disabled{color:#b9b9b9;background:#f5f5f5;cursor:not-allowed}
-.icobtn{border:0;background:none;color:#9aa6b3;font-size:12px;padding:2px 5px;border-radius:4px}.icobtn:hover{background:#fbecec;color:var(--brand)}
-.data-table{width:100%;border-collapse:collapse;font-size:10px}.data-table th,.data-table td{border-bottom:1px solid #edf0f3;padding:5px;text-align:left}.data-table input{width:70px;height:24px;border:1px solid #dde4eb;border-radius:3px;font-size:10px}
-.canvas-el{position:absolute;z-index:3}
-.canvas-el .el-controls{position:absolute;top:-14px;right:-6px;display:none;gap:3px}
-.canvas-el:hover .el-controls,.canvas-el.dragging .el-controls{display:flex}
-.el-controls button{width:20px;height:20px;border-radius:50%;border:1px solid #dbe2ea;background:#fff;font-size:10px;line-height:1;display:grid;place-items:center;box-shadow:0 2px 6px #0002}
-.el-controls .grab{cursor:grab}.el-controls .del{color:#c22;cursor:pointer}
-.floating-text{font-size:20px;font-weight:700;color:#173454;background:#fff;padding:8px 12px;border:1px dashed #c9b3b3;border-radius:5px}
-.floating-image{max-width:220px;max-height:120px;border:1px dashed #c9b3b3;padding:4px;background:#fff;display:block}
-.floating-line{height:2px;background:#dce4ec}
-.floating-rect{border:1px solid #c9adad;background:#fbf4f4}
-.toast{position:fixed;right:22px;bottom:22px;background:var(--brand-900);color:#fff;padding:12px 16px;border-radius:8px;box-shadow:var(--shadow);font-size:12px;opacity:0;transform:translateY(10px);pointer-events:none;transition:.25s;z-index:20}.toast.show{opacity:1;transform:none}
-.modal-back{position:fixed;inset:0;background:#2a080899;display:none;align-items:center;justify-content:center;z-index:15}.modal-back.show{display:flex}.modal{width:min(720px,90vw);max-height:82vh;background:#fff;border-radius:12px;box-shadow:0 20px 60px #2a080855;overflow:hidden}.modal-head{padding:18px 20px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between}.modal-head h2{font-size:15px;margin:0}.modal-body{padding:18px 20px;overflow:auto}.drop{border:2px dashed #d9bcbc;border-radius:10px;padding:35px;text-align:center;background:#fdf7f7;color:#65768b}.drop strong{display:block;font-size:14px;color:#3a0d0d;margin-bottom:8px}.file-input{display:none}.modal-foot{padding:12px 20px;border-top:1px solid var(--line);display:flex;justify-content:flex-end;gap:8px}.btn{border:1px solid #d8e0e8;background:#fff;padding:9px 13px;border-radius:6px;font-size:11px}.btn.primary{background:var(--brand);border-color:var(--brand);color:#fff}.btn.danger{color:#c22;border-color:#f0c8c8}
-.presentation .topbar,.presentation .toolbar,.presentation .filterbar,.presentation .inspector,.presentation .statusbar{display:none}.exit-presentation{display:none;position:fixed;top:18px;right:18px;z-index:30;border:0;border-radius:8px;background:var(--brand-900);color:#fff;padding:11px 16px;font-weight:700;box-shadow:0 8px 25px #2a080833}.presentation .exit-presentation{display:block}.presentation .body{height:100vh}.presentation .canvas-area{padding:0;align-items:center;background:#fff}.presentation .page{box-shadow:none;transform:none!important;width:min(1280px,100vw);min-height:0;padding:5vw 4vw}.presentation .svgchart{height:44vh}.presentation .chart-title{font-size:24px}.presentation .title-wrap h1{font-size:34px}
-@media(max-width:1050px){.inspector{width:280px}.page{width:820px}}
-@media print{body{overflow:visible}.topbar,.toolbar,.filterbar,.inspector,.statusbar{display:none!important}.canvas-area{padding:0!important}.page{box-shadow:none!important;transform:none!important;width:100%!important}.presentation .page{width:100%!important}}
+  :root{
+    --bg:#f4f6fb; --bg-2:#eef2f9; --surface:#ffffff; --surface-2:#f8fafc;
+    --border:#e6ebf2; --border-2:#eef2f7;
+    --text:#0f172a; --text-2:#475569; --text-3:#94a3b8;
+    --accent:#4f46e5; --accent-2:#7c3aed; --accent-soft:#eef2ff;
+    --success:#059669; --success-soft:#d1fae5;
+    --danger:#dc2626; --danger-soft:#fee2e2;
+    --warning:#d97706; --warning-soft:#fef3c7;
+    --shadow-sm:0 1px 2px rgba(15,23,42,.04);
+    --shadow:0 4px 16px rgba(15,23,42,.06);
+    --shadow-lg:0 18px 44px -18px rgba(15,23,42,.22);
+    --radius:16px; --radius-sm:10px;
+    --grid-line:rgba(15,23,42,.06);
+    --scroll: #cbd5e1;
+  }
+  [data-theme="dark"]{
+    --bg:#0a0f1c; --bg-2:#0d1424; --surface:#111a2e; --surface-2:#16203a;
+    --border:#1e2a44; --border-2:#22304e;
+    --text:#e6ecf7; --text-2:#94a3b8; --text-3:#64748b;
+    --accent:#818cf8; --accent-2:#a78bfa; --accent-soft:#1e1b4b;
+    --success:#34d399; --success-soft:#064e3b;
+    --danger:#f87171; --danger-soft:#7f1d1d;
+    --warning:#fbbf24; --warning-soft:#78350f;
+    --shadow-sm:0 1px 2px rgba(0,0,0,.4);
+    --shadow:0 4px 20px rgba(0,0,0,.4);
+    --shadow-lg:0 18px 44px -18px rgba(0,0,0,.7);
+    --grid-line:rgba(148,163,184,.12);
+    --scroll:#334155;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{
+    background:
+      radial-gradient(1200px 600px at 10% -10%, rgba(79,70,229,.08), transparent 60%),
+      radial-gradient(900px 500px at 90% 0%, rgba(124,58,237,.07), transparent 55%),
+      var(--bg);
+    color:var(--text);
+    font-family:'Inter','Segoe UI',system-ui,-apple-system,Arial,sans-serif;
+    font-feature-settings:'cv02','cv03','cv04','cv11';
+    padding:24px;
+    min-height:100vh;
+    transition:background .3s ease, color .3s ease;
+  }
+  .wrap{max-width:1560px;margin:0 auto}
+
+  /* ============ HEADER ============ */
+  header{
+    display:flex;justify-content:space-between;align-items:center;
+    flex-wrap:wrap;gap:16px;margin-bottom:22px;
+  }
+  .brand{display:flex;align-items:center;gap:14px}
+  .brand-mark{
+    width:46px;height:46px;border-radius:14px;display:grid;place-items:center;
+    background:linear-gradient(135deg,#4f46e5 0%,#7c3aed 55%,#a855f7 100%);
+    color:#fff;font-size:22px;box-shadow:0 10px 24px -8px rgba(79,70,229,.55);
+  }
+  h1{font-size:22px;font-weight:800;letter-spacing:-.02em;line-height:1.15}
+  h1 span{background:linear-gradient(90deg,var(--accent),var(--accent-2));-webkit-background-clip:text;background-clip:text;color:transparent}
+  .muted{color:var(--text-2);font-size:13px;margin-top:2px}
+
+  .header-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .btn{
+    border:0;border-radius:12px;padding:10px 16px;font-weight:700;font-size:13px;
+    cursor:pointer;background:linear-gradient(135deg,var(--accent),var(--accent-2));
+    color:#fff;transition:transform .15s ease, box-shadow .15s ease, opacity .15s ease;
+    box-shadow:0 8px 20px -10px rgba(79,70,229,.6);
+    display:inline-flex;align-items:center;gap:8px;font-family:inherit;
+  }
+  .btn:hover{transform:translateY(-1px);box-shadow:0 12px 24px -10px rgba(79,70,229,.7)}
+  .btn:active{transform:translateY(0)}
+  .btn-ghost{
+    background:var(--surface);color:var(--text);border:1px solid var(--border);
+    box-shadow:var(--shadow-sm);padding:10px 14px;
+  }
+  .btn-ghost:hover{background:var(--surface-2);box-shadow:var(--shadow)}
+  #status{
+    padding:8px 14px;border-radius:999px;background:var(--accent-soft);
+    color:var(--accent);font-size:12px;font-weight:700;white-space:nowrap;
+    border:1px solid transparent;transition:all .2s ease;
+  }
+
+  /* ============ VIEW DROPDOWN ============ */
+  .view-dropdown{position:relative}
+  .dropdown-menu{
+    position:absolute;top:calc(100% + 8px);right:0;min-width:260px;
+    background:var(--surface);border:1px solid var(--border);border-radius:14px;
+    box-shadow:var(--shadow-lg);padding:8px;z-index:50;
+    opacity:0;visibility:hidden;transform:translateY(-6px);
+    transition:opacity .15s ease, transform .15s ease, visibility .15s;
+  }
+  .view-dropdown.open .dropdown-menu{opacity:1;visibility:visible;transform:translateY(0)}
+  .dropdown-title{
+    font-size:11px;font-weight:800;color:var(--text-3);
+    text-transform:uppercase;letter-spacing:.6px;padding:8px 10px 6px;
+  }
+  .dropdown-menu label{
+    display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:10px;
+    font-size:13px;font-weight:500;color:var(--text);cursor:pointer;user-select:none;
+    transition:background .12s ease;
+  }
+  .dropdown-menu label:hover{background:var(--surface-2)}
+  .dropdown-menu input[type="checkbox"]{
+    appearance:none;width:18px;height:18px;border-radius:6px;
+    border:1.5px solid var(--border);background:var(--surface);position:relative;
+    cursor:pointer;transition:all .15s ease;flex-shrink:0;
+  }
+  .dropdown-menu input[type="checkbox"]:checked{
+    background:linear-gradient(135deg,var(--accent),var(--accent-2));border-color:transparent;
+  }
+  .dropdown-menu input[type="checkbox"]:checked::after{
+    content:"";position:absolute;left:5px;top:1px;width:6px;height:10px;
+    border:solid #fff;border-width:0 2px 2px 0;transform:rotate(45deg);
+  }
+
+  /* ============ UPLOAD ============ */
+  .upload-zone{
+    border:2px dashed var(--border);border-radius:var(--radius);
+    padding:22px;text-align:center;background:var(--surface);
+    cursor:pointer;margin-bottom:20px;transition:.2s;box-shadow:var(--shadow-sm);
+    position:relative;overflow:hidden;
+  }
+  .upload-zone::before{
+    content:"";position:absolute;inset:0;background:radial-gradient(600px 120px at 50% 0, rgba(79,70,229,.08), transparent 70%);
+    opacity:0;transition:opacity .25s ease;pointer-events:none;
+  }
+  .upload-zone:hover::before{opacity:1}
+  .upload-zone.drag-over{border-color:var(--accent);background:var(--accent-soft)}
+  .upload-zone input[type="file"]{display:none}
+  .upload-zone .hint{font-weight:700;color:var(--text);font-size:14px}
+  .upload-zone .sub{font-size:12.5px;color:var(--text-3);margin-top:3px}
+
+  /* ============ FILTERS ============ */
+  .filters{
+    display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;
+    background:var(--surface);padding:16px;border-radius:var(--radius);
+    border:1px solid var(--border);margin-bottom:20px;box-shadow:var(--shadow-sm);
+  }
+  .filters label{
+    display:block;font-size:10.5px;font-weight:800;color:var(--text-3);
+    text-transform:uppercase;letter-spacing:.6px;
+  }
+  .filters select,.filters input{
+    width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:10px;
+    background:var(--surface-2);color:var(--text);font-size:13px;margin-top:5px;
+    font-family:inherit;transition:border .15s ease, background .15s ease, box-shadow .15s ease;
+    appearance:none;background-image:linear-gradient(45deg,transparent 50%,var(--text-3) 50%),linear-gradient(135deg,var(--text-3) 50%,transparent 50%);
+    background-position:calc(100% - 15px) 50%,calc(100% - 10px) 50%;
+    background-size:5px 5px,5px 5px;background-repeat:no-repeat;
+  }
+  .filters input{background-image:none;padding-right:12px}
+  .filters select:focus,.filters input:focus{
+    outline:none;border-color:var(--accent);background-color:var(--surface);
+    box-shadow:0 0 0 4px var(--accent-soft);
+  }
+
+  /* ============ KPI ============ */
+  .kpis{
+    display:grid;grid-template-columns:repeat(6,1fr);gap:14px;margin-bottom:20px;
+  }
+  .kpi{
+    background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
+    padding:16px;position:relative;overflow:hidden;box-shadow:var(--shadow-sm);
+    transition:transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+  }
+  .kpi::after{
+    content:"";position:absolute;top:0;left:0;right:0;height:3px;
+    background:linear-gradient(90deg,var(--k1,#4f46e5),var(--k2,#7c3aed));
+    opacity:.9;
+  }
+  .kpi:hover{transform:translateY(-2px);box-shadow:var(--shadow-lg);border-color:var(--border-2)}
+  .kpi .k-icon{
+    width:34px;height:34px;border-radius:10px;display:grid;place-items:center;
+    background:linear-gradient(135deg,var(--k1,#4f46e5),var(--k2,#7c3aed));
+    color:#fff;font-size:16px;margin-bottom:10px;
+    box-shadow:0 6px 14px -6px rgba(79,70,229,.6);
+  }
+  .kpi .label{font-size:11px;color:var(--text-3);font-weight:700;text-transform:uppercase;letter-spacing:.5px}
+  .kpi .value{font-size:24px;font-weight:800;margin:4px 0 3px;line-height:1.15;letter-spacing:-.02em;word-break:break-word}
+  .kpi .sub{font-size:11.5px;color:var(--text-3)}
+
+  /* ============ PANELS GRID ============ */
+  .panels{
+    display:grid;grid-template-columns:repeat(12,1fr);gap:18px;
+  }
+  .panel{
+    background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
+    padding:18px;box-shadow:var(--shadow-sm);min-height:120px;
+    display:flex;flex-direction:column;
+    transition:box-shadow .2s ease, border-color .2s ease;
+    animation:fadeIn .35s ease;
+  }
+  @keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+  .panel:hover{box-shadow:var(--shadow)}
+  .panel.w7{grid-column:span 7}
+  .panel.w5{grid-column:span 5}
+  .panel.w4{grid-column:span 4}
+  .panel.w6{grid-column:span 6}
+  .panel.w12{grid-column:span 12}
+  .panel.hidden{display:none!important}
+
+  .panel h2{
+    font-size:14px;font-weight:800;letter-spacing:-.01em;
+    margin-bottom:14px;display:flex;justify-content:space-between;
+    align-items:center;flex-wrap:wrap;gap:8px;
+  }
+  .panel h2 .pill{
+    font-size:11px;font-weight:700;color:var(--accent);
+    background:var(--accent-soft);padding:3px 10px;border-radius:999px;
+  }
+  .panel h2 .pill-muted{
+    font-size:11px;font-weight:600;color:var(--text-3);background:var(--surface-2);
+    padding:3px 10px;border-radius:999px;
+  }
+  .panel h2 .h-right{display:flex;gap:6px;align-items:center}
+  .panel h2 select{
+    border:1px solid var(--border);border-radius:8px;padding:4px 10px;font-size:11.5px;
+    background:var(--surface-2);color:var(--text);font-family:inherit;font-weight:600;
+    cursor:pointer;
+  }
+  .panel h2 select:focus{outline:none;border-color:var(--accent)}
+
+  /* ============ TABLE ============ */
+  .table-wrap{max-height:330px;overflow:auto;border-radius:10px;margin:-4px -4px 0}
+  .table-wrap::-webkit-scrollbar{width:8px;height:8px}
+  .table-wrap::-webkit-scrollbar-thumb{background:var(--scroll);border-radius:8px}
+  .table-wrap::-webkit-scrollbar-track{background:transparent}
+  table{width:100%;border-collapse:collapse;font-size:12.5px}
+  th,td{padding:9px 10px;border-bottom:1px solid var(--border-2);text-align:left;vertical-align:middle}
+  th{
+    position:sticky;top:0;background:var(--surface);z-index:2;
+    font-size:10.5px;text-transform:uppercase;color:var(--text-3);font-weight:800;
+    letter-spacing:.5px;cursor:pointer;user-select:none;
+  }
+  th:hover{color:var(--accent)}
+  tbody tr{transition:background .12s ease}
+  tbody tr:hover{background:var(--surface-2)}
+  .text-right{text-align:right}
+  td .desc{color:var(--text-2);font-size:12px;max-width:280px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+  /* ============ BAR ROWS ============ */
+  .bar-row{
+    display:grid;grid-template-columns:130px 1fr 90px;gap:12px;align-items:center;
+    margin:9px 0;font-size:12.5px;
+  }
+  .bar-row .bname{
+    color:var(--text-2);font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+  }
+  .bar-track{height:8px;background:var(--surface-2);border-radius:999px;overflow:hidden;border:1px solid var(--border-2)}
+  .bar-fill{height:100%;border-radius:999px;background:linear-gradient(90deg,var(--accent),var(--accent-2));transition:width .45s cubic-bezier(.2,.7,.3,1)}
+  .bar-row .bval{text-align:right;font-weight:700;font-variant-numeric:tabular-nums}
+
+  .chart-container{position:relative;height:300px}
+
+  /* ============ DETAIL ============ */
+  .detail-controls{
+    display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+    font-size:12px;color:var(--text-2);margin-bottom:10px;
+  }
+  .detail-controls select,.detail-controls button{
+    border:1px solid var(--border);background:var(--surface-2);color:var(--text);
+    border-radius:8px;padding:5px 10px;font-size:12px;font-weight:600;cursor:pointer;
+    font-family:inherit;transition:all .15s ease;
+  }
+  .detail-controls button:hover:not(:disabled){background:var(--accent-soft);color:var(--accent);border-color:var(--accent)}
+  .detail-controls button:disabled{opacity:.4;cursor:not-allowed}
+  .detail-wrap{max-height:440px;overflow:auto;border-radius:10px}
+  .detail-wrap::-webkit-scrollbar{width:8px;height:8px}
+  .detail-wrap::-webkit-scrollbar-thumb{background:var(--scroll);border-radius:8px}
+  .detail-wrap table{font-size:12px;min-width:1100px}
+  .detail-wrap th{background:var(--surface)}
+  .detail-wrap td.num{text-align:right;font-variant-numeric:tabular-nums;font-weight:600}
+
+  /* ============ RESPONSIVE ============ */
+  @media (max-width:1200px){
+    .kpis{grid-template-columns:repeat(3,1fr)}
+    .panel.w7,.panel.w5,.panel.w6{grid-column:span 12}
+    .panel.w4{grid-column:span 6}
+  }
+  @media (max-width:760px){
+    body{padding:14px}
+    .kpis{grid-template-columns:repeat(2,1fr)}
+    .panel.w4{grid-column:span 12}
+    header{flex-direction:column;align-items:stretch}
+    .header-actions{justify-content:space-between}
+    .bar-row{grid-template-columns:90px 1fr 70px;font-size:11.5px}
+  }
+
+  /* ============ SCROLLBAR GLOBAL ============ */
+  ::-webkit-scrollbar{width:10px;height:10px}
+  ::-webkit-scrollbar-thumb{background:var(--scroll);border-radius:10px}
+  ::-webkit-scrollbar-track{background:transparent}
 </style>
 </head>
 <body>
-<div class="app" id="app">
-<header class="topbar">
-  <div class="brand"><div class="brandmark">▦</div>ReportBuilder</div>
-  <div class="docname">Plantilla: <b>MAC Sell-out</b>⌄</div>
-  <div class="top-actions">
-    <button class="topbtn" id="presentationBtn">◉ Vista presentación</button>
-    <button class="topbtn" id="saveBtn">▣ Guardar</button>
-    <div style="position:relative">
-      <button class="topbtn primary" id="exportBtn">↓ Exportar ⌄</button>
-      <div class="insertmenu" id="exportMenu" style="width:170px">
-        <div class="element" data-export="pdf"><span class="ico">▤</span>Exportar a PDF</div>
-        <div class="element" data-export="png"><span class="ico">▧</span>Exportar a PNG</div>
+<div class="wrap">
+
+  <!-- HEADER -->
+  <header>
+    <div class="brand">
+      <div class="brand-mark">📊</div>
+      <div>
+        <h1>Dashboard <span>Sell‑out</span> · Versátil</h1>
+        <div class="muted">Arrastra tu Excel · detección automática de columnas (Cía, Folio, Fecha, Proveedor, Clave_Articulo, Descripción, Cantidad, Grupo, Vendedor, Clave Fabricante, Familia)</div>
       </div>
     </div>
-    <div class="avatar">●</div>
-  </div>
-</header>
-<div class="body">
-<main class="workspace">
-  <div class="toolbar">
-    <select class="select" id="paper"><option>Carta (Horizontal)</option><option>16:9 Presentación</option></select>
-    <div class="zoom"><button id="zoomOut">−</button><span id="zoomLabel">100%</span><button id="zoomIn">+</button></div>
-    <div class="insertwrap">
-      <button class="insertbtn" id="insertBtn">＋ Insertar ⌄</button>
-      <div class="insertmenu" id="insertMenu">
-        <div class="section-title">Básicos</div>
-        <div class="element" data-add="text"><span class="ico">T</span>Texto</div>
-        <div class="element" data-add="image"><span class="ico">▧</span>Imagen</div>
-        <div class="element" data-add="line"><span class="ico">⌁</span>Línea</div>
-        <div class="element" data-add="rect"><span class="ico">□</span>Rectángulo</div>
-        <div class="section-title">Diseño</div>
-        <div class="element" data-add="header"><span class="ico">▤</span>Ir a encabezado</div>
+    <div class="header-actions">
+      <div class="view-dropdown" id="viewDropdown">
+        <button class="btn btn-ghost" id="viewBtn">⚙️ Paneles</button>
+        <div class="dropdown-menu" id="viewMenu">
+          <div class="dropdown-title">Mostrar paneles</div>
+          <label><input type="checkbox" data-panel="kpis" checked> KPIs principales</label>
+          <label><input type="checkbox" data-panel="trend" checked> Evolución mensual</label>
+          <label><input type="checkbox" data-panel="providers" checked> Sell-out por proveedor</label>
+          <label><input type="checkbox" data-panel="families" checked> Top familias</label>
+          <label><input type="checkbox" data-panel="skus" checked> Top SKU</label>
+          <label><input type="checkbox" data-panel="groups" checked> Top grupos</label>
+          <label><input type="checkbox" data-panel="sellers" checked> Top vendedores</label>
+          <label><input type="checkbox" data-panel="companies" checked> Top Cías</label>
+          <label><input type="checkbox" data-panel="manufacturers" checked> Top fabricantes</label>
+          <label><input type="checkbox" data-panel="detail" checked> Detalle de registros</label>
+        </div>
       </div>
+      <button class="btn btn-ghost" id="themeBtn" title="Cambiar tema">🌙</button>
+      <button class="btn btn-ghost" id="exportBtn" title="Exportar CSV">⬇️ CSV</button>
+      <button class="btn" id="reloadBtn">🔄 Cargar Excel</button>
+      <span id="status">Sin datos</span>
     </div>
+  </header>
+
+  <!-- UPLOAD -->
+  <div class="upload-zone" id="dropZone">
+    <input type="file" id="fileInput" accept=".xlsx,.xls,.csv">
+    <div class="hint">📂 Arrastra tu archivo Excel aquí o haz clic para seleccionar</div>
+    <div class="sub">.xlsx · .xls · .csv · detecta automáticamente todas las columnas</div>
   </div>
-  <div class="filterbar">
-    <span class="fbar-title"><span class="ico">⚙</span>Filtros</span>
-    <span class="flabel">Vendedor</span><select id="fVendedor" disabled><option value="">Todos</option></select>
-    <span class="flabel">Clave</span><select id="fClave" disabled><option value="">Todos</option></select>
-    <span class="flabel">Familia</span><select id="fFamilia" disabled><option value="">Todos</option></select>
-    <button class="clearf" id="clearFilters">Limpiar filtros</button>
-    <span class="stat" id="filterStat">Datos de ejemplo · importa un Excel para habilitar filtros</span>
+
+  <!-- FILTERS -->
+  <div class="filters" id="filters">
+    <div><label>Año</label><select id="year"><option>Todos</option></select></div>
+    <div><label>Tienda</label><select id="cia"><option>Todos</option></select></div>
+    <div><label>Proveedor</label><select id="line"><option>Todos</option></select></div>
+    <div><label>Familia</label><select id="family"><option>Todos</option></select></div>
+    <div><label>Grupo</label><select id="grupo"><option>Todos</option></select></div>
+    <div><label>Vendedor</label><select id="vendedor"><option>Todos</option></select></div>
+    <div><label>SKU</label><select id="sku"><option>Todos</option></select></div>
+    <div><label>Buscar</label><input id="search" type="text" placeholder="SKU, descripción, folio..."></div>
   </div>
-  <div class="canvas-area" id="canvasArea">
-    <section class="page" id="reportPage">
-      <div class="page-header">
-        <div class="title-wrap"><h1 id="reportTitle">2024~2026. MAC Sell-out</h1><div class="subtitle" id="reportSubtitle">Comité de Administración, Acuerdo RECURRENTE</div></div>
-                <img class="logo" id="logo" src="Logo.png" alt="alan" onerror="this.style.display='none';document.getElementById('logoFallback').style.display='block'">
-        <div class="logo-fallback" id="logoFallback">alan<small>siempre funciona</small></div>
-        <div class="accent"></div>
+
+  <!-- PANELS GRID -->
+  <div class="panels" id="panelsGrid">
+
+    <!-- KPIs -->
+    <section class="panel w12" data-panel="kpis" id="pKpis">
+      <div class="kpis" id="kpis">
+        <div class="kpi" style="--k1:#4f46e5;--k2:#6366f1"><div class="k-icon">📦</div><div class="label">Sell‑out total</div><div class="value" id="total">0</div><div class="sub">piezas filtradas</div></div>
+        <div class="kpi" style="--k1:#059669;--k2:#10b981"><div class="k-icon">📈</div><div class="label">Variación anual</div><div class="value" id="growth">—</div><div class="sub">último vs anterior</div></div>
+        <div class="kpi" style="--k1:#d97706;--k2:#f59e0b"><div class="k-icon">🏢</div><div class="label">Proveedor líder</div><div class="value" id="leader" style="font-size:18px">—</div><div class="sub">por sell‑out</div></div>
+        <div class="kpi" style="--k1:#7c3aed;--k2:#a855f7"><div class="k-icon">🏷️</div><div class="label">Familia líder</div><div class="value" id="topfam" style="font-size:18px">—</div><div class="sub">por sell‑out</div></div>
+        <div class="kpi" style="--k1:#0891b2;--k2:#06b6d4"><div class="k-icon">📅</div><div class="label">Promedio mensual</div><div class="value" id="avgmonth">—</div><div class="sub">del período</div></div>
+        <div class="kpi" style="--k1:#db2777;--k2:#ec4899"><div class="k-icon">🔥</div><div class="label">Mes pico</div><div class="value" id="peakmonth" style="font-size:18px">—</div><div class="sub">mayor venta</div></div>
       </div>
-      <div class="charts" id="charts"></div>
     </section>
-  </div>
-  <div class="statusbar"><span class="dot"></span><span id="status">Documento listo</span><span class="right">Carta horizontal · <b id="zoomStatus">100%</b></span></div>
-</main>
 
-<aside class="inspector" id="inspector">
-  <div class="inspect-tabs"><button class="active">Propiedades</button><button id="dataTab">Cargar Excel</button></div>
-  <div class="panel"><h3>Encabezado</h3>
-    <div class="field"><label>Título</label><input id="titleInput" value="2024~2026. MAC Sell-out"></div>
-    <div class="field"><label>Subtítulo</label><input id="subtitleInput" value="Comité de Administración, Acuerdo RECURRENTE"></div>
-    <div class="field"><label>Línea de acento</label><div class="row"><input id="accentInput" value="#E2001A"><input type="color" id="accentColor" value="#e2001a"></div></div>
+    <!-- Trend -->
+    <section class="panel w7" data-panel="trend">
+      <h2>📈 Evolución mensual
+        <span class="h-right">
+          <select id="chartGroupBy">
+            <option value="year">Por año</option>
+            <option value="family">Por familia</option>
+          </select>
+          <select id="chartYear" style="display:none"></select>
+        </span>
+      </h2>
+      <div class="chart-container"><canvas id="trendChart"></canvas></div>
+    </section>
+
+    <!-- Providers -->
+    <section class="panel w5" data-panel="providers">
+      <h2>🏢 Sell‑out por proveedor <span class="pill-muted">Top 10</span></h2>
+      <div id="lineBars"></div>
+    </section>
+
+    <!-- Families -->
+    <section class="panel w5" data-panel="families">
+      <h2>🏷️ Top familias <span class="pill-muted">Top 10</span></h2>
+      <div class="table-wrap"><table><thead><tr><th data-sort="name">Familia</th><th data-sort="value" class="text-right">Sell‑out</th></tr></thead><tbody id="familyTable"></tbody></table></div>
+    </section>
+
+    <!-- SKUs -->
+    <section class="panel w7" data-panel="skus">
+      <h2>⭐ Top SKU <span class="pill-muted">Top 10</span></h2>
+      <div class="table-wrap"><table><thead><tr><th data-sort="name">SKU</th><th>Descripción</th><th data-sort="value" class="text-right">Sell‑out</th></tr></thead><tbody id="skuTable"></tbody></table></div>
+    </section>
+
+    <!-- Groups -->
+    <section class="panel w4" data-panel="groups">
+      <h2>🧩 Top grupos <span class="pill-muted">Top 8</span></h2>
+      <div id="groupBars"></div>
+    </section>
+
+    <!-- Sellers -->
+    <section class="panel w4" data-panel="sellers">
+      <h2>🧑‍💼 Top vendedores <span class="pill-muted">Top 8</span></h2>
+      <div id="sellerBars"></div>
+    </section>
+
+    <!-- Companies -->
+    <section class="panel w4" data-panel="companies">
+      <h2>🏬 Top Tiendas <span class="pill-muted">Top 8</span></h2>
+      <div id="ciaBars"></div>
+    </section>
+
+    <!-- Manufacturers -->
+    <section class="panel w12" data-panel="manufacturers">
+      <h2>🔧 Top fabricantes <span class="pill-muted">Top 12</span></h2>
+      <div id="mfrBars"></div>
+    </section>
+
+    <!-- Detail -->
+    <section class="panel w12" data-panel="detail">
+      <h2>🧾 Detalle de registros <span class="pill-muted" id="detailCount">0</span></h2>
+      <div class="detail-controls">
+        <span>Filas por página:</span>
+        <select id="pageSize"><option>25</option><option selected>50</option><option>100</option><option>200</option></select>
+        <button id="prevPage">← Anterior</button>
+        <span id="pageInfo">1 / 1</span>
+        <button id="nextPage">Siguiente →</button>
+      </div>
+      <div class="detail-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Cía</th><th>Folio</th><th>Período</th><th>Proveedor</th><th>Familia</th>
+              <th>Grupo</th><th>Vendedor</th><th>Fabricante</th><th>SKU</th><th>Descripción</th>
+              <th class="text-right">Cantidad</th>
+            </tr>
+          </thead>
+          <tbody id="detailBody"></tbody>
+        </table>
+      </div>
+    </section>
+
   </div>
-  <div class="panel"><h3>Gráfica general</h3>
-    <div class="field"><label>Título de la gráfica</label><input id="chartTitleInput"></div>
-    <div class="field"><label>Descripción</label><input id="chartDescInput"></div>
-    <div class="field" id="seriesLegendField" style="display:none"><label>Familias (color asignado automático)</label><div id="seriesLegend" style="font-size:10.5px;line-height:1.9"></div></div>
-    <button class="mini-btn" id="editDataBtn">▤ Editar datos manualmente</button>
-    <button class="mini-btn" id="removeExcelBtn" style="display:none">✕ Quitar Excel importado</button>
-  </div>
-  <div class="panel"><h3>Configuración general</h3>
-    <div class="switch">Mostrar cantidades en los puntos <span class="toggle on" id="labelsToggle" role="switch" tabindex="0" aria-checked="true"><i></i></span></div>
-    <div class="switch">Mostrar grid <span class="toggle on" id="gridToggle" role="switch" tabindex="0" aria-checked="true"><i></i></span></div>
-  </div>
-</aside>
-</div>
 </div>
 
-<div class="modal-back" id="importModal">
- <div class="modal">
-  <div class="modal-head"><h2>Importar datos desde Excel</h2><button class="btn" id="closeModal">Cerrar</button></div>
-  <div class="modal-body">
-    <div class="drop" id="drop"><strong>Suelta aquí tu archivo .XLSX</strong>o haz clic para seleccionarlo<br><small>Detectamos automáticamente Fecha, Cantidad, Vendedor, Clave de artículo y Familia.</small><input type="file" class="file-input" id="fileInput" accept=".xlsx,.xls,.csv"></div>
-    <div id="importPreview" style="margin-top:16px"></div>
-  </div>
-  <div class="modal-foot"><button class="btn" id="cancelImport">Cancelar</button><button class="btn primary" id="applyImport" disabled>Aplicar datos</button></div>
- </div>
-</div>
-<button class="exit-presentation" id="exitPresentation">Salir de presentación</button><div class="toast" id="toast"></div>
-
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
 <script>
-const $=s=>document.querySelector(s), $$=s=>document.querySelectorAll(s);
-function toast(t){const x=$("#toast");x.textContent=t;x.classList.add("show");setTimeout(()=>x.classList.remove("show"),2400)}
-function esc(s){return String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]))}
-function fmt(n){return Math.round(n).toLocaleString("es-MX")}
+/* ============================================================
+   UTILIDADES
+============================================================ */
+const MONTHS = ['ENE','FEB','MAR','ABR','MAY','JUN','JUL','AGO','SEP','OCT','NOV','DIC'];
+const STORAGE_PREFIX = 'dash_v2_';
 
-const state={
- title:"2024~2026. MAC Sell-out",
- subtitle:"Comité de Administración, Acuerdo RECURRENTE",
- accent:"#E2001A",
- grid:true, labels:true,
- chart:{title:"TRAYECTORIA POR FAMILIA",desc:"Datos de ejemplo. Importa un Excel para ver información real.",series:[
-   {name:"MEZCLADORAS",color:"#e2001a",data:[420,310,505,470,560,610,540,600,650,590,630,700]},
-   {name:"COLADERAS",color:"#1f6feb",data:[260,300,280,255,310,330,290,350,320,300,340,360]},
-   {name:"PICHANCHAS",color:"#2ca02c",data:[110,26,88,99,115,120,98,140,130,111,102,96]},
-   {name:"REGADERAS",color:"#ff7f0e",data:[70,95,80,88,60,75,90,85,78,92,88,100]}
- ]},
- filters:{vendedor:"",clave:"",familia:""},
- months:["ENE","FEB","MAR","ABRIL","MAY","JUN","JUL","AGO","SEP","OCT","NOV","DIC"],
- yMin:0,yMax:800,yStep:200,
- elements:[]
+const norm = s => String(s ?? '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim();
+const num = x => {
+  if (typeof x === 'number') return x;
+  const n = parseFloat(String(x).replace(/[$,\s]/g,''));
+  return isNaN(n) ? 0 : n;
 };
-let zoom=1, imported=null, elIdSeq=1, rawData=null, distinctVals=null;
-const PALETTE=["#e2001a","#1f6feb","#2ca02c","#ff7f0e","#9467bd","#8c564b","#17becf","#bcbd22","#e377c2","#7f7f7f","#3a86ff","#ffbe0b","#06d6a0","#ef476f","#118ab2","#8338ec","#fb5607","#3a5a40","#c9184a","#5c4d7d"];
+const fmt = n => new Intl.NumberFormat('es-MX',{maximumFractionDigits:0}).format(n||0);
 
-/* ---------- Escalado dinámico del eje (soporta valores negativos, p.ej. devoluciones netas) ---------- */
-function computeScale(){
- let min=0,max=0;
- (state.chart.series||[]).forEach(s=>(s.data||[]).forEach(v=>{if(v!=null&&v!==""&&isFinite(v)){min=Math.min(min,Number(v));max=Math.max(max,Number(v))}}));
- if(min===0&&max===0){state.yMin=0;state.yMax=150;state.yStep=30;return}
- const range=(max-min)||10;
- const magnitude=Math.pow(10,Math.floor(Math.log10(range)));
- const rawStep=range/5;
- const niceSteps=[1,2,2.5,5,10].map(n=>n*magnitude);
- let step=niceSteps.find(s=>s>=rawStep)||niceSteps[niceSteps.length-1]*Math.ceil(rawStep/niceSteps[niceSteps.length-1]);
- state.yMin=Math.floor(min/step)*step; state.yMax=Math.ceil(max/step)*step;
- if(state.yMin===state.yMax)state.yMax=state.yMin+step;
- state.yStep=step;
+function col(obj, candidates) {
+  const keys = Object.keys(obj);
+  for (const c of candidates) {
+    const found = keys.find(k => norm(k) === norm(c));
+    if (found) return obj[found];
+  }
+  for (const c of candidates) {
+    const cn = norm(c);
+    const found = keys.find(k => norm(k).includes(cn));
+    if (found) return obj[found];
+  }
+  return '';
 }
-
-function linePath(data,w,h,left,top,bottom){
- const usableH=h-top-bottom, usableW=w-left-4, step=usableW/(state.months.length-1), range=state.yMax-state.yMin;
- let d="";
- data.forEach((v,i)=>{if(v==null||v==="")return; let x=left+i*step,y=top+usableH-((Number(v)-state.yMin)/range)*usableH;
-  d+=d?` L ${x.toFixed(1)} ${y.toFixed(1)}`:`M ${x.toFixed(1)} ${y.toFixed(1)}`;
- }); return d;
+function monthNum(m) {
+  if (typeof m === 'number') return m;
+  const s = norm(m);
+  const idx = MONTHS.findIndex(mo => norm(mo) === s || s.startsWith(norm(mo)));
+  return idx >= 0 ? idx + 1 : (num(m) || 1);
 }
-/* Coloca la etiqueta de cada línea junto a su primer punto, evitando que se encimen entre sí */
-function resolveLabelPositions(items,minGap,top,bottom){
- items.sort((a,b)=>a.y-b.y);
- for(let i=1;i<items.length;i++){if(items[i].y-items[i-1].y<minGap)items[i].y=items[i-1].y+minGap}
- const overflow=items.length?items[items.length-1].y-bottom:0;
- if(overflow>0){for(let i=items.length-1;i>=0;i--){items[i].y-=overflow; if(i>0&&items[i].y-items[i-1].y>=minGap)break}}
- for(let i=0;i<items.length;i++){if(items[i].y<top)items[i].y=top+i*minGap}
- return items;
-}
-function renderChart(){
- const c=state.chart, series=c.series||[], many=series.length>6;
- const W=920,H=400,L=many?185:150,T=22,B=40,R=14, range=state.yMax-state.yMin, usableH=H-T-B, xstep=(W-L-R)/(state.months.length-1);
- const dotR=many?3:6, strokeW=many?2.2:4.5, fontPt=many?9:11;
- let svg=`<svg class="svgchart" viewBox="0 0 ${W} ${H}" aria-label="${esc(c.title)}">`;
- for(let y=state.yMin;y<=state.yMax+0.001;y+=state.yStep){
-   let yy=T+usableH-((y-state.yMin)/range)*usableH;
-   if(state.grid)svg+=`<line x1="${L}" y1="${yy}" x2="${W-R}" y2="${yy}" stroke="${Math.abs(y)<1e-6?'#e0b9b9':'#f0e6e6'}" stroke-width="${Math.abs(y)<1e-6?1.4:1}"/>`;
-   svg+=`<text x="${L-8}" y="${yy+3}" text-anchor="end" font-size="9.5" fill="#5c2020">${fmt(y)}</text>`;
- }
- state.months.forEach((m,i)=>{let x=L+i*xstep;svg+=`<text x="${x}" y="${H-17}" text-anchor="middle" font-size="9" fill="#5c2020">${m}</text>`});
- const labelItems=[];
- series.forEach((s,si)=>{
-   svg+=`<path d="${linePath(s.data,W,H,L,T,B)}" fill="none" stroke="${s.color}" stroke-width="${strokeW}" stroke-linecap="round" stroke-linejoin="round"/>`;
-   s.data.forEach((v,i)=>{
-     if(v==null||v==="")return;
-     let x=L+i*xstep,y=T+usableH-((Number(v)-state.yMin)/range)*usableH;
-     svg+=`<circle cx="${x}" cy="${y}" r="${dotR}" fill="#fff" stroke="${s.color}" stroke-width="${many?1.6:3}"/>`;
-     if(state.labels&&!many)svg+=`<text x="${x}" y="${y-13}" text-anchor="middle" font-size="${fontPt}" font-weight="700" fill="${s.color}">${fmt(v)}</text>`;
-   });
-   const firstIdx=s.data.findIndex(v=>v!=null&&v!=="");
-   if(firstIdx>=0){const y0=T+usableH-((Number(s.data[firstIdx])-state.yMin)/range)*usableH; labelItems.push({si,realY:y0,y:y0,name:s.name,color:s.color,x:L+firstIdx*xstep})}
- });
- /* Etiqueta al inicio de cada línea, del lado izquierdo del primer punto, sin encimarse */
- resolveLabelPositions(labelItems,many?11:15,T,H-B);
- labelItems.forEach(li=>{
-   const lx=li.x-9;
-   if(Math.abs(li.y-li.realY)>3)svg+=`<line x1="${li.x-6}" y1="${li.realY}" x2="${lx+3}" y2="${li.y}" stroke="${li.color}" stroke-width="1" stroke-dasharray="1.5,1.5"/>`;
-   svg+=`<text x="${lx}" y="${li.y+3}" text-anchor="end" font-size="${many?8.5:10}" font-weight="700" fill="${li.color}">${esc(li.name)}</text>`;
- });
- svg+="</svg>";
- return `<div class="chart-card"><div>${svg}</div><div class="chart-title">${esc(c.title)}</div><div class="chart-desc">${esc(c.desc)}</div></div>`;
-}
-function render(){
- computeScale();
- $("#reportTitle").textContent=state.title;$("#reportSubtitle").textContent=state.subtitle;
- $("#charts").innerHTML=renderChart();
- $("#chartTitleInput").value=state.chart.title;
- $("#chartDescInput").value=state.chart.desc;
- const many=(state.chart.series||[]).length>1;
- $("#seriesLegendField").style.display=many?"block":"none";
- if(many)$("#seriesLegend").innerHTML=state.chart.series.map(s=>`<div style="display:flex;align-items:center;gap:6px"><span style="width:9px;height:9px;border-radius:50%;background:${s.color};display:inline-block"></span>${esc(s.name)}</div>`).join("");
- renderElements();
- $("#zoomLabel").textContent=Math.round(zoom*100)+"%";$("#zoomStatus").textContent=Math.round(zoom*100)+"%";
- $("#reportPage").style.transform=`scale(${zoom})`;
+function toYM(v) {
+  if (v instanceof Date && !isNaN(v)) return { year: v.getFullYear(), month: v.getMonth()+1 };
+  if (typeof v === 'number' && v > 25000 && v < 80000) {
+    try { const d = XLSX.SSF.parse_date_code(v); return { year:d.y, month:d.m }; } catch(e){}
+  }
+  const str = String(v ?? '').trim();
+  if (str) {
+    const m = str.match(/(\d{4})[-\/](\d{1,2})/);
+    if (m) return { year: +m[1], month: +m[2] };
+    const d = new Date(str);
+    if (!isNaN(d)) return { year: d.getFullYear(), month: d.getMonth()+1 };
+  }
+  return null;
 }
 
-/* ---------- Filtros por Vendedor, Clave y Familia (se llenan al importar el Excel) ---------- */
-function populateFilters(distinct){
- distinctVals=distinct;
- [["fVendedor","vendedor"],["fClave","clave"],["fFamilia","familia"]].forEach(([id,key])=>{
-   const sel=$("#"+id);
-   sel.innerHTML='<option value="">Todos</option>'+distinct[key].map(v=>`<option value="${esc(v)}">${esc(v)}</option>`).join("");
-   sel.disabled=false;
-   sel.value=state.filters[key]&&distinct[key].includes(state.filters[key])?state.filters[key]:"";
-   state.filters[key]=sel.value;
- });
+/* ============================================================
+   EXTRACCIÓN (lista + pivot)
+============================================================ */
+function extractRows(rawRows) {
+  if (!rawRows.length) return [];
+  const keys = Object.keys(rawRows[0]);
+
+  // --- Pivot ---
+  const monthPatterns = [/^\d{2}-\d{2}$/, /^[A-Za-z]{3}-\d{2}$/, /^\d{2}[A-Za-z]{3}$/];
+  const monthCols = keys.filter(k => monthPatterns.some(p => p.test(String(k).trim())));
+
+  const skuC  = ['clave_articulo','clave articulo','clavearticulo','sku','clave','codigo','código','item','material','parte','articulo'];
+  const descC = ['descripcion articulo','descripcion_articulo','descripcionarticulo','descripcion','descripción','producto','nombre'];
+  const lineC = ['proveedor','línea','linea','line','categoria','categoría','clase'];
+  const famC  = ['familia','family'];
+  const ciaC  = ['cia','compañia','compañía','compania','empresa','company','sucursal','tienda'];
+  const folC  = ['folio','factura','ticket'];
+  const grpC  = ['grupo','group','categoria','categoría'];
+  const venC  = ['vendedor','vendor','agente','salesperson'];
+  const mfrC  = ['clave fabricante','clave_fabricante','fabricante','manufacturer','mfr'];
+
+  if (monthCols.length > 0) {
+    const skuKey = keys.find(k => skuC.some(c => norm(k)===norm(c))) || keys[0];
+    const descKey = keys.find(k => descC.some(c => norm(k)===norm(c)));
+    const lineKey = keys.find(k => lineC.some(c => norm(k)===norm(c)));
+    const famKey  = keys.find(k => famC.some(c => norm(k)===norm(c)));
+    const ciaKey  = keys.find(k => ciaC.some(c => norm(k)===norm(c)));
+    const grpKey  = keys.find(k => grpC.some(c => norm(k)===norm(c)));
+    const venKey  = keys.find(k => venC.some(c => norm(k)===norm(c)));
+    const mfrKey  = keys.find(k => mfrC.some(c => norm(k)===norm(c)));
+
+    const out = [];
+    for (const row of rawRows) {
+      const sku = String(row[skuKey] ?? '').trim();
+      if (!sku) continue;
+      const desc  = descKey ? String(row[descKey] ?? '').trim() : '';
+      const line  = lineKey ? String(row[lineKey] ?? '').trim() : 'SIN PROVEEDOR';
+      const family= famKey  ? String(row[famKey]  ?? '').trim() : 'SIN FAMILIA';
+      const cia   = ciaKey  ? String(row[ciaKey]  ?? '').trim() : '';
+      const grupo = grpKey  ? String(row[grpKey]  ?? '').trim() : '';
+      const vendedor = venKey ? String(row[venKey] ?? '').trim() : '';
+      const fabricante = mfrKey ? String(row[mfrKey] ?? '').trim() : '';
+
+      for (const mc of monthCols) {
+        const value = num(row[mc]);
+        if (value === 0) continue;
+        const clean = String(mc).trim();
+        let year, month;
+        if (/^\d{2}-\d{2}$/.test(clean)) { const [y,m]=clean.split('-'); year=2000+ +y; month=+m; }
+        else if (/^\d{4}$/.test(clean))    { year=2000+ +clean.slice(0,2); month=+clean.slice(2); }
+        else if (/^[A-Za-z]{3}-\d{2}$/.test(clean)) { const [mn,y]=clean.split('-'); const i=MONTHS.findIndex(mo=>norm(mo)===norm(mn)); month=i+1; year=2000+ +y; }
+        else continue;
+        if (month < 1 || month > 12) continue;
+        out.push({ year, month, sku, desc, line, family, cia, grupo, vendedor, fabricante, folio:'', value });
+      }
+    }
+    return out;
+  }
+
+  // --- Formato lista ---
+  const dateC  = ['fecha','date','periodo'];
+  const yearC  = ['año','ano','year'];
+  const monthC = ['mes','month'];
+  const valC   = ['cantidad','sell-out','sellout','venta','ventas','importe','valor','unidades','qty'];
+  const out = [];
+  for (const row of rawRows) {
+    let ym = toYM(col(row, dateC));
+    if (!ym) {
+      const y = num(col(row, yearC));
+      const m = monthNum(col(row, monthC));
+      if (y >= 2000) ym = { year:y, month:m||1 };
+    }
+    if (!ym) continue;
+
+    const sku   = String(col(row, skuC)).trim();
+    const desc  = String(col(row, descC)).trim();
+    const line  = String(col(row, lineC)).trim() || 'SIN PROVEEDOR';
+    const family= String(col(row, famC)).trim()  || 'SIN FAMILIA';
+    const cia   = String(col(row, ciaC)).trim();
+    const folio = String(col(row, folC)).trim();
+    const grupo = String(col(row, grpC)).trim();
+    const vendedor = String(col(row, venC)).trim();
+    const fabricante = String(col(row, mfrC)).trim();
+    const value = num(col(row, valC));
+
+    if (!sku) continue;
+    if (value === 0) continue;
+
+    out.push({ year: ym.year, month: ym.month, sku, desc, line, family, cia, grupo, vendedor, fabricante, folio, value });
+  }
+  return out;
 }
-function recomputeFromRaw(){
- if(!rawData)return;
- const f=state.filters;
- const filtered=rawData.filter(r=>(!f.vendedor||r.vendedor===f.vendedor)&&(!f.clave||r.clave===f.clave)&&(!f.familia||r.familia===f.familia));
- if(f.familia){
-   const data=Array(12).fill(0);
-   filtered.forEach(r=>data[r.mes-1]+=r.cantidad);
-   state.chart.series=[{name:f.familia,color:PALETTE[0],data}];
-   state.chart.title=f.familia.toUpperCase();
- }else{
-   const groups={};
-   filtered.forEach(r=>{const g=r.familia||"SIN FAMILIA";if(!groups[g])groups[g]=Array(12).fill(0);groups[g][r.mes-1]+=r.cantidad});
-   const names=Object.keys(groups).sort((a,b)=>groups[b].reduce((x,y)=>x+y,0)-groups[a].reduce((x,y)=>x+y,0));
-   state.chart.series=names.map((n,i)=>({name:n,color:PALETTE[i%PALETTE.length],data:groups[n]}));
-   state.chart.title="TRAYECTORIA POR FAMILIA";
- }
- const total=filtered.reduce((a,r)=>a+r.cantidad,0);
- const parts=[];
- if(f.vendedor)parts.push("Vendedor: "+f.vendedor);
- if(f.clave)parts.push("Clave: "+f.clave);
- state.chart.desc=(parts.length?parts.join(" · ")+" · ":"")+`${state.chart.series.length} familia(s) · total del periodo: ${fmt(total)} pzas.`;
- $("#filterStat").innerHTML=`Mostrando <b>${filtered.length.toLocaleString("es-MX")}</b> de <b>${rawData.length.toLocaleString("es-MX")}</b> registros`;
- render();
+
+/* ============================================================
+   ESTADO
+============================================================ */
+let allRows = [];
+let chartInstance = null;
+let detailPage = 1;
+
+/* ============================================================
+   TEMA
+============================================================ */
+function applyTheme(theme) {
+  document.body.dataset.theme = theme;
+  document.getElementById('themeBtn').textContent = theme === 'dark' ? '☀️' : '🌙';
+  try { localStorage.setItem(STORAGE_PREFIX + 'theme', theme); } catch(e){}
+  if (allRows.length) render();
 }
-["fVendedor","fClave","fFamilia"].forEach(id=>{
- const key=id==="fVendedor"?"vendedor":id==="fClave"?"clave":"familia";
- $("#"+id).addEventListener("change",e=>{state.filters[key]=e.target.value;recomputeFromRaw()});
+function initTheme() {
+  const saved = localStorage.getItem(STORAGE_PREFIX + 'theme');
+  if (saved) applyTheme(saved);
+  else if (window.matchMedia('(prefers-color-scheme: dark)').matches) applyTheme('dark');
+  else applyTheme('light');
+}
+
+/* ============================================================
+   CARGA DE ARCHIVO
+============================================================ */
+function loadFile(file) {
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      const data = new Uint8Array(e.target.result);
+      const wb = XLSX.read(data, { type:'array', cellDates:true });
+      const sheet = wb.Sheets[wb.SheetNames[0]];
+      const rawTyped = XLSX.utils.sheet_to_json(sheet, { defval:'' });
+      const rawStr   = XLSX.utils.sheet_to_json(sheet, { defval:'', raw:false });
+      if (!rawTyped.length) { setStatus('El archivo está vacío.', 'error'); return; }
+
+      let rows = extractRows(rawTyped);
+      if (!rows.length) rows = extractRows(rawStr);
+      if (!rows.length) { setStatus('No se pudieron extraer datos. Revisa las columnas.', 'error'); return; }
+
+      allRows = rows;
+      detailPage = 1;
+      setStatus(`✅ ${rows.length} registros cargados`, 'ok');
+      try { localStorage.setItem(STORAGE_PREFIX + 'data', JSON.stringify(rows)); } catch(e){}
+      populateFilters();
+      populateChartYears();
+      render();
+    } catch (err) {
+      setStatus('Error al leer el archivo: ' + err.message, 'error');
+      console.error(err);
+    }
+  };
+  reader.readAsArrayBuffer(file);
+}
+
+/* ============================================================
+   FILTROS
+============================================================ */
+function getFiltered() {
+  const g = id => document.getElementById(id).value;
+  const year = g('year'), cia = g('cia'), line = g('line'), family = g('family'),
+        grupo = g('grupo'), vendedor = g('vendedor'), sku = g('sku');
+  const search = norm(document.getElementById('search').value);
+  return allRows.filter(r => {
+    if (year !== 'Todos' && String(r.year) !== year) return false;
+    if (cia !== 'Todos' && r.cia !== cia) return false;
+    if (line !== 'Todos' && r.line !== line) return false;
+    if (family !== 'Todos' && r.family !== family) return false;
+    if (grupo !== 'Todos' && r.grupo !== grupo) return false;
+    if (vendedor !== 'Todos' && r.vendedor !== vendedor) return false;
+    if (sku !== 'Todos' && r.sku !== sku) return false;
+    if (search) {
+      const t = norm([r.sku,r.desc,r.family,r.line,r.cia,r.grupo,r.vendedor,r.fabricante,r.folio].join(' '));
+      if (!t.includes(search)) return false;
+    }
+    return true;
+  });
+}
+function groupBy(data, key) {
+  const m = new Map();
+  for (const r of data) {
+    const k = r[key] || '—';
+    m.set(k, (m.get(k) || 0) + r.value);
+  }
+  return m;
+}
+
+/* ============================================================
+   RENDER
+============================================================ */
+function render() {
+  const data = getFiltered();
+  const empty = '<div class="muted" style="padding:22px;text-align:center;font-size:12.5px;">Sin datos</div>';
+
+  if (!data.length) {
+    ['total','growth','leader','topfam','avgmonth','peakmonth'].forEach(id => document.getElementById(id).textContent = id==='total'?'0':'—');
+    ['lineBars','groupBars','sellerBars','ciaBars','mfrBars'].forEach(id => document.getElementById(id).innerHTML = empty);
+    document.getElementById('familyTable').innerHTML = '<tr><td colspan="2" class="muted" style="text-align:center;padding:18px;">—</td></tr>';
+    document.getElementById('skuTable').innerHTML    = '<tr><td colspan="3" class="muted" style="text-align:center;padding:18px;">—</td></tr>';
+    document.getElementById('detailBody').innerHTML  = '<tr><td colspan="11" class="muted" style="text-align:center;padding:18px;">—</td></tr>';
+    document.getElementById('detailCount').textContent = '0';
+    document.getElementById('pageInfo').textContent = '1 / 1';
+    updateChart([]);
+    return;
+  }
+
+  /* ---------- KPIs ---------- */
+  const total = data.reduce((s,r)=>s+r.value,0);
+  document.getElementById('total').textContent = fmt(total);
+
+  const years = [...new Set(data.map(r=>r.year))].sort((a,b)=>a-b);
+  if (years.length >= 2) {
+    const last = years[years.length-1], prev = years[years.length-2];
+    const sL = data.filter(r=>r.year===last).reduce((s,r)=>s+r.value,0);
+    const sP = data.filter(r=>r.year===prev).reduce((s,r)=>s+r.value,0);
+    const g = sP ? ((sL/sP - 1) * 100) : 0;
+    const el = document.getElementById('growth');
+    el.textContent = (g>=0?'+':'') + g.toFixed(1) + '%';
+    el.style.color = g >= 0 ? 'var(--success)' : 'var(--danger)';
+  } else {
+    document.getElementById('growth').textContent = '—';
+    document.getElementById('growth').style.color = '';
+  }
+
+  const lineMap = groupBy(data, 'line');
+  const leader = [...lineMap.entries()].sort((a,b)=>b[1]-a[1])[0];
+  document.getElementById('leader').textContent = leader ? leader[0] : '—';
+
+  const famMap = groupBy(data, 'family');
+  const topFam = [...famMap.entries()].sort((a,b)=>b[1]-a[1])[0];
+  document.getElementById('topfam').textContent = topFam ? topFam[0] : '—';
+
+  const monthsCount = new Set(data.map(r=>`${r.year}-${r.month}`)).size || 1;
+  document.getElementById('avgmonth').textContent = fmt(total / monthsCount);
+
+  const monthMap = groupBy(data, 'month');
+  const peak = [...monthMap.entries()].sort((a,b)=>b[1]-a[1])[0];
+  document.getElementById('peakmonth').textContent = peak ? MONTHS[peak[0]-1] + ' · ' + fmt(peak[1]) : '—';
+
+  /* ---------- Barras helper ---------- */
+  const barHTML = (map, top=10) => {
+    const sorted = [...map.entries()].sort((a,b)=>b[1]-a[1]).slice(0, top);
+    if (!sorted.length) return empty;
+    const max = sorted[0][1] || 1;
+    return sorted.map(([name,val]) => `
+      <div class="bar-row">
+        <div class="bname" title="${escapeHtml(name)}">${escapeHtml(name)}</div>
+        <div class="bar-track"><div class="bar-fill" style="width:${(val/max)*100}%"></div></div>
+        <div class="bval">${fmt(val)}</div>
+      </div>
+    `).join('');
+  };
+
+  document.getElementById('lineBars').innerHTML = barHTML(lineMap, 10);
+
+  document.getElementById('groupBars').innerHTML  = barHTML(groupBy(data, 'grupo'), 8);
+  document.getElementById('sellerBars').innerHTML = barHTML(groupBy(data, 'vendedor'), 8);
+  document.getElementById('ciaBars').innerHTML    = barHTML(groupBy(data, 'cia'), 8);
+  document.getElementById('mfrBars').innerHTML    = barHTML(groupBy(data, 'fabricante'), 12);
+
+  /* ---------- Tablas ---------- */
+  const sortedFams = [...famMap.entries()].sort((a,b)=>b[1]-a[1]).slice(0, 10);
+  document.getElementById('familyTable').innerHTML = sortedFams.length
+    ? sortedFams.map(([n,v]) => `<tr><td>${escapeHtml(n)}</td><td class="text-right"><b>${fmt(v)}</b></td></tr>`).join('')
+    : '<tr><td colspan="2" class="muted" style="text-align:center;padding:18px;">—</td></tr>';
+
+  const skuMap = groupBy(data, 'sku');
+  const sortedSkus = [...skuMap.entries()].sort((a,b)=>b[1]-a[1]).slice(0, 10);
+  document.getElementById('skuTable').innerHTML = sortedSkus.length
+    ? sortedSkus.map(([sku,v]) => {
+        const d = data.find(r=>r.sku===sku)?.desc || '—';
+        return `<tr><td><b>${escapeHtml(sku)}</b></td><td><div class="desc" title="${escapeHtml(d)}">${escapeHtml(d)}</div></td><td class="text-right"><b>${fmt(v)}</b></td></tr>`;
+      }).join('')
+    : '<tr><td colspan="3" class="muted" style="text-align:center;padding:18px;">—</td></tr>';
+
+  /* ---------- Detalle ---------- */
+  renderDetail(data);
+
+  /* ---------- Gráfico ---------- */
+  populateChartYears();
+  updateChart(data);
+  saveFilters();
+}
+
+function escapeHtml(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+
+/* ============================================================
+   DETALLE + PAGINACIÓN
+============================================================ */
+function renderDetail(data) {
+  document.getElementById('detailCount').textContent = fmt(data.length) + ' registros';
+  const pageSize = parseInt(document.getElementById('pageSize').value) || 50;
+  const totalPages = Math.max(1, Math.ceil(data.length / pageSize));
+  if (detailPage > totalPages) detailPage = totalPages;
+  if (detailPage < 1) detailPage = 1;
+  const start = (detailPage - 1) * pageSize;
+  const slice = data.slice(start, start + pageSize);
+
+  document.getElementById('detailBody').innerHTML = slice.length
+    ? slice.map(r => `
+        <tr>
+          <td>${escapeHtml(r.cia||'—')}</td>
+          <td>${escapeHtml(r.folio||'—')}</td>
+          <td>${MONTHS[(r.month||1)-1]}-${String(r.year).slice(-2)}</td>
+          <td>${escapeHtml(r.line||'—')}</td>
+          <td>${escapeHtml(r.family||'—')}</td>
+          <td>${escapeHtml(r.grupo||'—')}</td>
+          <td>${escapeHtml(r.vendedor||'—')}</td>
+          <td>${escapeHtml(r.fabricante||'—')}</td>
+          <td><b>${escapeHtml(r.sku||'—')}</b></td>
+          <td><div class="desc" title="${escapeHtml(r.desc||'')}">${escapeHtml(r.desc||'—')}</div></td>
+          <td class="num">${fmt(r.value)}</td>
+        </tr>`).join('')
+    : '<tr><td colspan="11" class="muted" style="text-align:center;padding:18px;">—</td></tr>';
+
+  document.getElementById('pageInfo').textContent = `${detailPage} / ${totalPages}`;
+  document.getElementById('prevPage').disabled = detailPage <= 1;
+  document.getElementById('nextPage').disabled = detailPage >= totalPages;
+}
+
+/* ============================================================
+   GRÁFICO
+============================================================ */
+function updateChart(data) {
+  const canvas = document.getElementById('trendChart');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  if (chartInstance) { chartInstance.destroy(); chartInstance = null; }
+
+  const isDark = document.body.dataset.theme === 'dark';
+  const textColor = isDark ? '#94a3b8' : '#64748b';
+  const gridColor = isDark ? 'rgba(148,163,184,.1)' : 'rgba(15,23,42,.06)';
+
+  const mode = document.getElementById('chartGroupBy').value;
+  const years = [...new Set(data.map(r=>r.year))].sort((a,b)=>a-b);
+
+  if (!years.length) {
+    chartInstance = new Chart(ctx, {
+      type:'line', data:{labels:MONTHS,datasets:[]},
+      options:{responsive:true,maintainAspectRatio:false,
+        plugins:{legend:{display:false}},
+        scales:{y:{beginAtZero:true,grid:{color:gridColor},ticks:{color:textColor}},x:{grid:{display:false},ticks:{color:textColor}}}
+      }
+    });
+    return;
+  }
+
+  const palette = ['#4f46e5','#059669','#dc2626','#d97706','#7c3aed','#0891b2','#db2777','#65a30d','#ea580c','#14b8a6','#6366f1','#f43f5e'];
+  let datasets = [];
+
+  if (mode === 'year') {
+    datasets = years.map((year,i) => {
+      const m = new Array(12).fill(0);
+      data.filter(r=>r.year===year).forEach(r => { if (r.month>=1 && r.month<=12) m[r.month-1] += r.value; });
+      return {
+        label: String(year), data: m,
+        borderColor: palette[i%palette.length],
+        backgroundColor: hexA(palette[i%palette.length], .12),
+        fill: true, tension: 0.35, pointRadius: 3, pointHoverRadius: 6,
+        borderWidth: 2.5
+      };
+    });
+  } else {
+    const sel = document.getElementById('chartYear');
+    let selYear = parseInt(sel.value);
+    if (!selYear || !years.includes(selYear)) selYear = years[years.length-1];
+    const yearData = data.filter(r=>r.year===selYear);
+
+    const famMap = new Map();
+    yearData.forEach(r => famMap.set(r.family, (famMap.get(r.family)||0) + r.value));
+    const sorted = [...famMap.entries()].sort((a,b)=>b[1]-a[1]);
+    const TOP = 10;
+    const topFams = sorted.slice(0, TOP).map(x=>x[0]);
+    const otherFams = sorted.slice(TOP).map(x=>x[0]);
+
+    datasets = topFams.map((fam,i) => {
+      const m = new Array(12).fill(0);
+      yearData.filter(r=>r.family===fam).forEach(r => { if (r.month>=1 && r.month<=12) m[r.month-1] += r.value; });
+      return {
+        label: fam, data: m,
+        borderColor: palette[i%palette.length],
+        backgroundColor: hexA(palette[i%palette.length], .12),
+        fill:false, tension:0.35, pointRadius:3, pointHoverRadius:6, borderWidth:2.5
+      };
+    });
+
+    if (otherFams.length) {
+      const m = new Array(12).fill(0);
+      yearData.filter(r=>otherFams.includes(r.family)).forEach(r => { if (r.month>=1 && r.month<=12) m[r.month-1] += r.value; });
+      datasets.push({
+        label: `Otras (${otherFams.length})`, data:m,
+        borderColor:'#94a3b8', backgroundColor:'rgba(148,163,184,.15)',
+        borderDash:[6,4], fill:false, tension:0.35, pointRadius:2, borderWidth:2
+      });
+    }
+  }
+
+  chartInstance = new Chart(ctx, {
+    type:'line',
+    data:{labels:MONTHS,datasets},
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      interaction:{mode:'nearest',intersect:false},
+      plugins:{
+        legend:{position:'top',labels:{boxWidth:10,usePointStyle:true,padding:12,color:textColor,font:{size:11,family:'Inter'}}},
+        tooltip:{
+          backgroundColor:isDark?'#0f172a':'#0f172a',
+          titleColor:'#f1f5f9',bodyColor:'#e2e8f0',padding:10,cornerRadius:8,
+          callbacks:{label: c => c.dataset.label + ': ' + fmt(c.parsed.y)}
+        }
+      },
+      scales:{
+        y:{beginAtZero:true,grid:{color:gridColor},ticks:{color:textColor,font:{family:'Inter'},callback:v=>fmt(v)}},
+        x:{grid:{display:false},ticks:{color:textColor,font:{family:'Inter',size:10}}}
+      }
+    }
+  });
+}
+function hexA(hex, a) {
+  const h = hex.replace('#','');
+  const r = parseInt(h.substring(0,2),16), g = parseInt(h.substring(2,4),16), b = parseInt(h.substring(4,6),16);
+  return `rgba(${r},${g},${b},${a})`;
+}
+
+/* ============================================================
+   AÑOS DEL GRÁFICO
+============================================================ */
+function populateChartYears() {
+  const sel = document.getElementById('chartYear');
+  if (!sel) return;
+  const years = [...new Set(allRows.map(r=>r.year))].sort((a,b)=>a-b);
+  const current = sel.value;
+  sel.innerHTML = years.map(y => `<option value="${y}">${y}</option>`).join('');
+  if (current && years.map(String).includes(current)) sel.value = current;
+  else if (years.length) sel.value = years[years.length-1];
+}
+
+/* ============================================================
+   FILTROS: populate / persistencia
+============================================================ */
+function populateFilters() {
+  const fields = {
+    year:  r => String(r.year),
+    cia:   r => r.cia,
+    line:  r => r.line,
+    family:r => r.family,
+    grupo: r => r.grupo,
+    vendedor: r => r.vendedor,
+    sku:   r => r.sku,
+  };
+  for (const [id, fn] of Object.entries(fields)) {
+    const select = document.getElementById(id);
+    if (!select) continue;
+    const vals = [...new Set(allRows.map(fn))].filter(v => v && v !== 'undefined' && v !== '').sort();
+    const current = select.value;
+    select.innerHTML = '<option>Todos</option>' + vals.map(v => `<option>${escapeHtml(v)}</option>`).join('');
+    if (current && vals.includes(current)) select.value = current;
+  }
+  loadFilters();
+}
+function saveFilters() {
+  const filters = {};
+  ['year','cia','line','family','grupo','vendedor','sku','search'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) filters[id] = el.value;
+  });
+  try { localStorage.setItem(STORAGE_PREFIX + 'filters', JSON.stringify(filters)); } catch(e){}
+}
+function loadFilters() {
+  try {
+    const raw = localStorage.getItem(STORAGE_PREFIX + 'filters');
+    if (!raw) return;
+    const f = JSON.parse(raw);
+    ['year','cia','line','family','grupo','vendedor','sku','search'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el && f[id] !== undefined) el.value = f[id];
+    });
+  } catch(e){}
+}
+
+/* ============================================================
+   VISIBILIDAD DE PANELES
+============================================================ */
+function initPanelVisibility() {
+  let state = {};
+  try { state = JSON.parse(localStorage.getItem(STORAGE_PREFIX + 'panels') || '{}'); } catch(e){}
+  document.querySelectorAll('.panel[data-panel]').forEach(el => {
+    const id = el.dataset.panel;
+    const visible = state[id] !== false;
+    el.classList.toggle('hidden', !visible);
+    const cb = document.querySelector(`#viewMenu input[data-panel="${id}"]`);
+    if (cb) cb.checked = visible;
+  });
+}
+function savePanelVisibility() {
+  const state = {};
+  document.querySelectorAll('.panel[data-panel]').forEach(el => {
+    state[el.dataset.panel] = !el.classList.contains('hidden');
+  });
+  try { localStorage.setItem(STORAGE_PREFIX + 'panels', JSON.stringify(state)); } catch(e){}
+}
+
+/* ============================================================
+   EXPORT CSV
+============================================================ */
+function exportCSV() {
+  const data = getFiltered();
+  if (!data.length) { setStatus('Nada que exportar', 'error'); return; }
+  const head = ['Año','Mes','Cía','Folio','Proveedor','Familia','Grupo','Vendedor','Fabricante','SKU','Descripción','Cantidad'];
+  const lines = [head.join(',')];
+  for (const r of data) {
+    const row = [r.year, MONTHS[(r.month||1)-1], r.cia, r.folio, r.line, r.family, r.grupo, r.vendedor, r.fabricante, r.sku, r.desc, r.value];
+    lines.push(row.map(v => `"${String(v??'').replace(/"/g,'""')}"`).join(','));
+  }
+  const blob = new Blob(['\uFEFF' + lines.join('\n')], { type:'text/csv;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = `sellout_${new Date().toISOString().slice(0,10)}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+  setStatus('⬇️ CSV exportado', 'ok');
+}
+
+/* ============================================================
+   STATUS
+============================================================ */
+function setStatus(msg, type='info') {
+  const el = document.getElementById('status');
+  el.textContent = msg;
+  if (type === 'ok')    { el.style.background='var(--success-soft)'; el.style.color='var(--success)'; }
+  else if (type === 'error') { el.style.background='var(--danger-soft)'; el.style.color='var(--danger)'; }
+  else { el.style.background='var(--accent-soft)'; el.style.color='var(--accent)'; }
+}
+
+/* ============================================================
+   EVENTOS
+============================================================ */
+document.getElementById('fileInput').addEventListener('change', function() {
+  if (this.files && this.files[0]) loadFile(this.files[0]);
+  this.value = '';
 });
-$("#clearFilters").addEventListener("click",()=>{
- state.filters={vendedor:"",clave:"",familia:""};
- ["fVendedor","fClave","fFamilia"].forEach(id=>$("#"+id).value="");
- if(rawData)recomputeFromRaw(); else render();
- toast("Filtros limpiados");
+const dropZone = document.getElementById('dropZone');
+dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('drag-over'); });
+dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
+dropZone.addEventListener('drop', e => {
+  e.preventDefault(); dropZone.classList.remove('drag-over');
+  if (e.dataTransfer.files.length) loadFile(e.dataTransfer.files[0]);
 });
-$("#removeExcelBtn").addEventListener("click",()=>{
- rawData=null;distinctVals=null;
- ["fVendedor","fClave","fFamilia"].forEach(id=>{const sel=$("#"+id);sel.innerHTML='<option value="">Todos</option>';sel.disabled=true;sel.value=""});
- state.filters={vendedor:"",clave:"",familia:""};
- state.chart={title:"TRAYECTORIA POR FAMILIA",desc:"Datos de ejemplo. Importa un Excel para ver información real.",series:[
-   {name:"MEZCLADORAS",color:"#e2001a",data:[420,310,505,470,560,610,540,600,650,590,630,700]},
-   {name:"COLADERAS",color:"#1f6feb",data:[260,300,280,255,310,330,290,350,320,300,340,360]},
-   {name:"PICHANCHAS",color:"#2ca02c",data:[110,26,88,99,115,120,98,140,130,111,102,96]},
-   {name:"REGADERAS",color:"#ff7f0e",data:[70,95,80,88,60,75,90,85,78,92,88,100]}
- ]};
- $("#filterStat").textContent="Datos de ejemplo · importa un Excel para habilitar filtros";
- $("#removeExcelBtn").style.display="none";
- $("#editDataBtn").disabled=false;
- render();toast("Se quitó el Excel importado");
+dropZone.addEventListener('click', () => document.getElementById('fileInput').click());
+document.getElementById('reloadBtn').addEventListener('click', () => document.getElementById('fileInput').click());
+document.getElementById('exportBtn').addEventListener('click', exportCSV);
+
+document.getElementById('themeBtn').addEventListener('click', () => {
+  applyTheme(document.body.dataset.theme === 'dark' ? 'light' : 'dark');
 });
 
-/* ---------- Elementos flotantes en el lienzo: persisten en el estado, se pueden arrastrar y eliminar ---------- */
-function addElement(type){
- const base={id:"el"+(elIdSeq++),type,left:42,top:46};
- if(type==="text")base.text="Texto editable";
- if(type==="image")base.src=null;
- if(type==="rect"){base.width=24;base.height=15}
- if(type==="line"){base.width=40;base.height=0}
- state.elements.push(base);
- renderElements();
- return base;
-}
-function renderElements(){
- const page=$("#reportPage");
- page.querySelectorAll(".canvas-el").forEach(n=>n.remove());
- state.elements.forEach(el=>{
-   const wrap=document.createElement("div");
-   wrap.className="canvas-el";
-   wrap.style.left=el.left+"%";wrap.style.top=el.top+"%";wrap.style.transform="translate(-50%,-50%)";
-   wrap.dataset.id=el.id;
-   let inner="";
-   if(el.type==="text"){inner=`<div class="floating-text" contenteditable="true">${esc(el.text)}</div>`}
-   else if(el.type==="image"){inner=el.src?`<img class="floating-image" src="${el.src}">`:`<div class="floating-image" style="display:grid;place-items:center;color:#a08;font-size:11px;width:180px;height:90px">Sin imagen</div>`}
-   else if(el.type==="rect"){inner=`<div class="floating-rect" style="width:${el.width}vw;height:${el.height}vw"></div>`}
-   else if(el.type==="line"){inner=`<div class="floating-line" style="width:${el.width}vw"></div>`}
-   wrap.innerHTML=inner+'<div class="el-controls"><button class="grab" title="Mover">✛</button><button class="del" title="Eliminar">✕</button></div>';
-   if(el.type==="text"){const txt=wrap.querySelector(".floating-text");txt.addEventListener("input",()=>{el.text=txt.textContent})}
-   wrap.querySelector(".del").addEventListener("click",()=>{state.elements=state.elements.filter(x=>x.id!==el.id);renderElements();toast("Elemento eliminado")});
-   wrap.querySelector(".grab").addEventListener("mousedown",(e)=>startDrag(e,el,wrap));
-   page.appendChild(wrap);
- });
-}
-function startDrag(e,el,wrap){
- e.preventDefault();
- const page=$("#reportPage");
- wrap.classList.add("dragging");
- function onMove(ev){
-   const rect=page.getBoundingClientRect();
-   let leftPct=((ev.clientX-rect.left)/rect.width)*100, topPct=((ev.clientY-rect.top)/rect.height)*100;
-   leftPct=Math.max(2,Math.min(98,leftPct));topPct=Math.max(2,Math.min(98,topPct));
-   el.left=leftPct;el.top=topPct; wrap.style.left=leftPct+"%";wrap.style.top=topPct+"%";
- }
- function onUp(){wrap.classList.remove("dragging");document.removeEventListener("mousemove",onMove);document.removeEventListener("mouseup",onUp)}
- document.addEventListener("mousemove",onMove);document.addEventListener("mouseup",onUp);
-}
-
-/* ---------- Encabezado / gráfica ---------- */
-$("#titleInput").addEventListener("input",e=>{state.title=e.target.value;$("#reportTitle").textContent=state.title});
-$("#subtitleInput").addEventListener("input",e=>{state.subtitle=e.target.value;$("#reportSubtitle").textContent=state.subtitle});
-$("#accentInput").addEventListener("input",e=>{state.accent=e.target.value;document.documentElement.style.setProperty("--accent",e.target.value);document.documentElement.style.setProperty("--brand",e.target.value);$("#accentColor").value=e.target.value});
-$("#accentColor").addEventListener("input",e=>{state.accent=e.target.value;document.documentElement.style.setProperty("--accent",e.target.value);document.documentElement.style.setProperty("--brand",e.target.value);$("#accentInput").value=e.target.value});
-$("#chartTitleInput").addEventListener("input",e=>{state.chart.title=e.target.value;$("#charts").innerHTML=renderChart()});
-$("#chartDescInput").addEventListener("input",e=>{state.chart.desc=e.target.value;$("#charts").innerHTML=renderChart()});
-
-$("#editDataBtn").addEventListener("click",()=>{
- if(rawData){toast("Los datos vienen del Excel importado. Ajusta los filtros, o quita el Excel para editar a mano.");return}
- openDataEditor();
+document.getElementById('chartGroupBy').addEventListener('change', function() {
+  document.getElementById('chartYear').style.display = this.value === 'family' ? 'inline-block' : 'none';
+  render();
 });
-function openDataEditor(){
- const c=state.chart;
- let body=`<table class="data-table"><thead><tr><th>Mes</th>${c.series.map(s=>`<th style="color:${s.color}">${esc(s.name)}</th>`).join("")}</tr></thead><tbody>`;
- for(let i=0;i<12;i++)body+=`<tr><td>${state.months[i]}</td>${c.series.map((s,j)=>`<td><input type="number" data-s="${j}" data-m="${i}" value="${s.data[i]??""}"></td>`).join("")}</tr>`;
- body+="</tbody></table>";
- const w=document.createElement("div");w.className="modal-back show";w.innerHTML=`<div class="modal"><div class="modal-head"><h2>Datos · ${esc(c.title)}</h2><button class="btn closeData">Cerrar</button></div><div class="modal-body">${body}</div><div class="modal-foot"><button class="btn primary applyData">Aplicar</button></div></div>`;
- document.body.appendChild(w);
- w.querySelector(".closeData").onclick=()=>w.remove();
- w.querySelector(".applyData").onclick=()=>{w.querySelectorAll("input").forEach(x=>c.series[+x.dataset.s].data[+x.dataset.m]=x.value===""?null:Number(x.value));w.remove();render();toast("Datos actualizados")};
-}
-function toggle(id,prop){
- const el=$(id);
- function flip(){el.classList.toggle("on");state[prop]=el.classList.contains("on");el.setAttribute("aria-checked",String(state[prop]));render()}
- el.addEventListener("click",flip);
- el.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();flip()}});
-}
-toggle("#gridToggle","grid");toggle("#labelsToggle","labels");
+document.getElementById('chartYear').addEventListener('change', () => render());
 
-$("#zoomIn").addEventListener("click",()=>{zoom=Math.min(1.3,zoom+.1);render()});
-$("#zoomOut").addEventListener("click",()=>{zoom=Math.max(.6,zoom-.1);render()});
-$("#presentationBtn").addEventListener("click",()=>{$("#app").classList.add("presentation");toast("Modo presentación activado")});
-$("#exitPresentation").addEventListener("click",()=>$("#app").classList.remove("presentation"));
-document.addEventListener("keydown",e=>{if(e.key==="Escape")$("#app").classList.remove("presentation")});
-$("#paper").addEventListener("change",e=>{if(e.target.value.includes("16:9")){$("#reportPage").style.aspectRatio="16/9";$("#reportPage").style.minHeight="0"}else{$("#reportPage").style.aspectRatio="auto";$("#reportPage").style.minHeight="680px"}});
-
-/* ---------- Guardar: no persistimos el dataset crudo (puede pesar varios MB), solo config + filtros ---------- */
-$("#saveBtn").addEventListener("click",()=>{
- try{
-   const toSave={title:state.title,subtitle:state.subtitle,accent:state.accent,grid:state.grid,labels:state.labels,filters:rawData?state.filters:{vendedor:"",clave:"",familia:""},chart:{title:state.chart.title,desc:state.chart.desc,series:state.chart.series},elements:state.elements};
-   localStorage.setItem("reportbuilder-state",JSON.stringify(toSave));
-   toast(rawData?"Guardado. Vuelve a importar el Excel para restaurar los filtros con datos completos.":"Plantilla guardada en este navegador");
- }catch(err){toast("No se pudo guardar (almacenamiento no disponible)")}
-});
-try{
- const saved=localStorage.getItem("reportbuilder-state");
- if(saved){const parsed=JSON.parse(saved);Object.assign(state,parsed);if(!Array.isArray(state.elements))state.elements=[]}
-}catch(err){}
-
-/* ---------- Exportar ---------- */
-function slug(s){return String(s).normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/(^-|-$)/g,"")||"reporte"}
-$("#exportBtn").addEventListener("click",(e)=>{e.stopPropagation();$("#exportMenu").classList.toggle("show");$("#insertMenu").classList.remove("show")});
-$("#exportMenu").addEventListener("click",e=>{
- const opt=e.target.closest("[data-export]");if(!opt)return;
- $("#exportMenu").classList.remove("show");
- if(opt.dataset.export==="pdf"){window.print()}
- else{html2canvas($("#reportPage"),{scale:2,backgroundColor:"#fff"}).then(c=>{const a=document.createElement("a");a.download=slug(state.title)+".png";a.href=c.toDataURL("image/png");a.click()})}
-});
-$("#insertBtn").addEventListener("click",(e)=>{e.stopPropagation();$("#insertMenu").classList.toggle("show");$("#exportMenu").classList.remove("show")});
-document.addEventListener("click",(e)=>{
- if(!e.target.closest(".insertwrap"))$("#insertMenu").classList.remove("show");
- if(!e.target.closest("#exportBtn")&&!e.target.closest("#exportMenu"))$("#exportMenu").classList.remove("show");
-});
-$("#insertMenu").addEventListener("click",e=>{
- const opt=e.target.closest("[data-add]");if(!opt)return;
- $("#insertMenu").classList.remove("show");
- const action=opt.dataset.add;
- if(action==="text"){addElement("text");toast("Texto agregado al lienzo (arrástralo con ✛)");return}
- if(action==="image"){
-   const input=document.createElement("input");input.type="file";input.accept="image/*";
-   input.onchange=()=>{const f=input.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{const el=addElement("image");el.src=r.result;renderElements();toast("Imagen agregada al lienzo")};r.readAsDataURL(f)};
-   input.click();return;
- }
- if(action==="line"){addElement("line");toast("Separador agregado");return}
- if(action==="rect"){addElement("rect");toast("Rectángulo agregado");return}
- if(action==="header"){window.scrollTo(0,0);$("#titleInput").focus();toast("Encabezado seleccionado");return}
+['year','cia','line','family','grupo','vendedor','sku','search'].forEach(id => {
+  const el = document.getElementById(id);
+  el.addEventListener('input', () => { detailPage = 1; render(); saveFilters(); });
+  el.addEventListener('change', () => { detailPage = 1; render(); saveFilters(); });
 });
 
-/* ---------- Importar Excel: Fecha, Cantidad, Vendedor, Clave_Articulo, Familia ---------- */
-$("#dataTab").addEventListener("click",()=>{$("#importModal").classList.add("show")});
-$("#closeModal").onclick=$("#cancelImport").onclick=()=>$("#importModal").classList.remove("show");
-$("#applyImport").addEventListener("click",()=>{
- if(!imported)return;
- rawData=imported.rawData;
- populateFilters(imported.distinct);
- $("#editDataBtn").disabled=true;
- $("#removeExcelBtn").style.display="block";
- recomputeFromRaw();
- $("#importModal").classList.remove("show");$("#status").textContent="Datos importados desde Excel";toast("Excel importado correctamente");
+/* Panel visibility dropdown */
+const viewDropdown = document.getElementById('viewDropdown');
+document.getElementById('viewBtn').addEventListener('click', e => {
+  e.stopPropagation();
+  viewDropdown.classList.toggle('open');
 });
-$("#drop").addEventListener("click",()=>$("#fileInput").click());
-$("#drop").addEventListener("dragover",e=>{e.preventDefault();$("#drop").style.background="#fdeeee"});
-$("#drop").addEventListener("dragleave",()=>$("#drop").style.background="");
-$("#drop").addEventListener("drop",e=>{e.preventDefault();$("#drop").style.background="";if(e.dataTransfer.files[0])handleFile(e.dataTransfer.files[0])});
-$("#fileInput").addEventListener("change",e=>{if(e.target.files[0])handleFile(e.target.files[0])});
-function norm(x){return String(x??"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().replace(/[^a-z0-9]/g,"")}
-function handleFile(file){
- const r=new FileReader();r.onload=e=>{
-  try{
-   const wb=XLSX.read(e.target.result,{type:"array",cellDates:true});
-   imported=interpretWorkbook(wb);
-   if(imported.error){$("#importPreview").innerHTML=`<div style="color:#c22;font-size:12px">${esc(imported.error)}</div>`;$("#applyImport").disabled=true;return}
-   $("#importPreview").innerHTML=`<div style="font-size:12px;color:#28405d"><b>${esc(file.name)}</b><br>${imported.message}</div>`;
-   $("#applyImport").disabled=false;
-  }catch(err){$("#importPreview").innerHTML=`<div style="color:#c22;font-size:12px">No se pudo leer el archivo: ${esc(err.message)}</div>`;$("#applyImport").disabled=true}
- };r.readAsArrayBuffer(file);
-}
-function interpretWorkbook(wb){
- let all=[];
- wb.SheetNames.forEach(sn=>{const ws=wb.Sheets[sn];const rows=XLSX.utils.sheet_to_json(ws,{defval:null,raw:true});if(rows.length)all.push({sheet:sn,rows})});
- let best=all.sort((a,b)=>b.rows.length-a.rows.length)[0]; if(!best)return {error:"No se encontraron filas en el archivo."};
- const rows=best.rows, headers=Object.keys(rows[0]||{}), nh=headers.map(norm);
- const find=(names)=>{for(const n of names){let i=nh.indexOf(norm(n));if(i>=0)return headers[i]}return null};
- let date=find(["Fecha","Date"]);
- let month=find(["Mes","Month"]);
- let qty=find(["Cantidad","Qty","Piezas","Quantity"]);
- let vendedor=find(["Vendedor","Seller","Agente"]);
- let clave=find(["Clave_Articulo","Clave Articulo","Clave","Codigo","Sku"]);
- let familia=find(["Familia","Family","Categoria","Categoría"]);
- if(!month&&date){month="__month";rows.forEach(r=>{let d=r[date];if(d instanceof Date)r.__month=d.getMonth()+1;else if(typeof d==="string"){let d2=new Date(d);r.__month=isNaN(d2)?null:d2.getMonth()+1}})}
- if(!qty||!month)return {error:`Hoja "${best.sheet}" detectada, pero no se identificaron columnas de Fecha/Cantidad. Encabezados: ${headers.slice(0,10).join(", ")}…`};
- const trim=v=>String(v??"").trim();
- const rawData=[];
- rows.forEach(r=>{
-   let m=Number(r[month]),q=Number(r[qty]);
-   if(!m||m<1||m>12||!isFinite(q))return;
-   rawData.push({mes:m,cantidad:q,vendedor:vendedor?trim(r[vendedor]):"",clave:clave?trim(r[clave]).toUpperCase():"",familia:familia?trim(r[familia]):""});
- });
- if(!rawData.length)return {error:"No se encontraron registros válidos (revisa las columnas de Fecha/Mes y Cantidad)."};
- const uniq=(field)=>[...new Set(rawData.map(r=>r[field]).filter(v=>v))].sort((a,b)=>a.localeCompare(b,"es"));
- const distinct={vendedor:vendedor?uniq("vendedor"):[],clave:clave?uniq("clave"):[],familia:familia?uniq("familia"):[]};
- const cols=[];
- if(vendedor)cols.push(`Vendedor (${distinct.vendedor.length})`);
- if(clave)cols.push(`Clave (${distinct.clave.length})`);
- if(familia)cols.push(`Familia (${distinct.familia.length})`);
- return {rawData,distinct,message:`Hoja "${best.sheet}" · ${rawData.length.toLocaleString("es-MX")} registros válidos. Filtros disponibles: ${cols.join(", ")||"ninguno detectado"}.`};
-}
+document.addEventListener('click', e => {
+  if (!viewDropdown.contains(e.target)) viewDropdown.classList.remove('open');
+});
+document.querySelectorAll('#viewMenu input[data-panel]').forEach(cb => {
+  cb.addEventListener('change', () => {
+    const el = document.querySelector(`.panel[data-panel="${cb.dataset.panel}"]`);
+    if (el) el.classList.toggle('hidden', !cb.checked);
+    savePanelVisibility();
+  });
+});
 
-render();
+/* Pagination */
+document.getElementById('pageSize').addEventListener('change', () => { detailPage = 1; render(); });
+document.getElementById('prevPage').addEventListener('click', () => { detailPage--; render(); });
+document.getElementById('nextPage').addEventListener('click', () => { detailPage++; render(); });
+
+/* Sort tables */
+document.querySelectorAll('th[data-sort]').forEach(th => {
+  th.addEventListener('click', function() {
+    const key = this.dataset.sort;
+    const isValue = key === 'value';
+    const tbody = this.closest('table').querySelector('tbody');
+    const rows = Array.from(tbody.querySelectorAll('tr'));
+    const dir = this.dataset.dir === 'asc' ? -1 : 1;
+    this.dataset.dir = dir === 1 ? 'asc' : 'desc';
+    rows.sort((a,b) => {
+      const aV = a.querySelectorAll('td')[isValue ? 1 : 0]?.textContent.trim() || '';
+      const bV = b.querySelectorAll('td')[isValue ? 1 : 0]?.textContent.trim() || '';
+      return isValue ? dir * (num(aV) - num(bV)) : dir * aV.localeCompare(bV);
+    });
+    rows.forEach(r => tbody.appendChild(r));
+  });
+});
+
+/* Resize chart */
+window.addEventListener('resize', () => { if (chartInstance) chartInstance.resize(); });
+
+/* ============================================================
+   INIT
+============================================================ */
+(function init() {
+  initTheme();
+  initPanelVisibility();
+
+  try {
+    const stored = localStorage.getItem(STORAGE_PREFIX + 'data');
+    if (stored) {
+      const rows = JSON.parse(stored);
+      if (rows && rows.length) {
+        allRows = rows;
+        setStatus(`📁 ${rows.length} registros desde caché local`, 'ok');
+        populateFilters();
+        populateChartYears();
+        render();
+        return;
+      }
+    }
+  } catch(e){}
+
+  setStatus('📊 Carga tu Excel para comenzar', 'info');
+  populateChartYears();
+})();
 </script>
 </body>
 </html>
