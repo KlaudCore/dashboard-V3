@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Dashboard Sell-out — Versátil</title>
+<title>Dashboard Sell-out — ALAN&reg;</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -12,7 +12,7 @@
     --bg:#f4f6fb; --bg-2:#eef2f9; --surface:#ffffff; --surface-2:#f8fafc;
     --border:#e6ebf2; --border-2:#eef2f7;
     --text:#0f172a; --text-2:#475569; --text-3:#94a3b8;
-    --accent:#4f46e5; --accent-2:#7c3aed; --accent-soft:#eef2ff;
+    --accent:#bb0615; --accent-2:#ed3a3a; --accent-soft:#eef2ff;
     --success:#059669; --success-soft:#d1fae5;
     --danger:#dc2626; --danger-soft:#fee2e2;
     --warning:#d97706; --warning-soft:#fef3c7;
@@ -53,16 +53,16 @@
   }
   .wrap{max-width:1560px;margin:0 auto}
 
-  /* ============ HEADER ============ */
   header{
     display:flex;justify-content:space-between;align-items:center;
     flex-wrap:wrap;gap:16px;margin-bottom:22px;
   }
   .brand{display:flex;align-items:center;gap:14px}
   .brand-mark{
-    width:46px;height:46px;border-radius:14px;display:grid;place-items:center;
-    background:linear-gradient(135deg,#4f46e5 0%,#7c3aed 55%,#a855f7 100%);
-    color:#fff;font-size:22px;box-shadow:0 10px 24px -8px rgba(79,70,229,.55);
+    width:120px;height:68px;border-radius:14px;object-fit:contain;
+    display:block;background:var(--surface);
+    box-shadow:0 10px 24px -8px rgba(43, 43, 43, 0.25);
+    border:1px solid var(--border);padding:4px;
   }
   h1{font-size:22px;font-weight:800;letter-spacing:-.02em;line-height:1.15}
   h1 span{background:linear-gradient(90deg,var(--accent),var(--accent-2));-webkit-background-clip:text;background-clip:text;color:transparent}
@@ -78,6 +78,7 @@
   }
   .btn:hover{transform:translateY(-1px);box-shadow:0 12px 24px -10px rgba(79,70,229,.7)}
   .btn:active{transform:translateY(0)}
+  .btn:disabled{opacity:.6;cursor:not-allowed;transform:none}
   .btn-ghost{
     background:var(--surface);color:var(--text);border:1px solid var(--border);
     box-shadow:var(--shadow-sm);padding:10px 14px;
@@ -89,7 +90,6 @@
     border:1px solid transparent;transition:all .2s ease;
   }
 
-  /* ============ VIEW DROPDOWN ============ */
   .view-dropdown{position:relative}
   .dropdown-menu{
     position:absolute;top:calc(100% + 8px);right:0;min-width:260px;
@@ -122,11 +122,10 @@
     border:solid #fff;border-width:0 2px 2px 0;transform:rotate(45deg);
   }
 
-  /* ============ UPLOAD ============ */
   .upload-zone{
     border:2px dashed var(--border);border-radius:var(--radius);
     padding:22px;text-align:center;background:var(--surface);
-    cursor:pointer;margin-bottom:20px;transition:.2s;box-shadow:var(--shadow-sm);
+    cursor:pointer;margin-bottom:16px;transition:.2s;box-shadow:var(--shadow-sm);
     position:relative;overflow:hidden;
   }
   .upload-zone::before{
@@ -139,11 +138,32 @@
   .upload-zone .hint{font-weight:700;color:var(--text);font-size:14px}
   .upload-zone .sub{font-size:12.5px;color:var(--text-3);margin-top:3px}
 
-  /* ============ FILTERS ============ */
+  .progress-wrap{
+    background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
+    padding:14px 16px;margin-bottom:20px;box-shadow:var(--shadow-sm);
+    animation:fadeIn .2s ease;
+  }
+  .progress-wrap.hidden{display:none}
+  .progress-head{
+    display:flex;justify-content:space-between;align-items:center;gap:12px;
+    font-size:12px;font-weight:700;color:var(--text-2);margin-bottom:9px;
+  }
+  .progress-track{
+    height:8px;border-radius:999px;background:var(--surface-2);
+    border:1px solid var(--border-2);overflow:hidden;
+  }
+  .progress-fill{
+    height:100%;width:0;border-radius:999px;
+    background:linear-gradient(90deg,var(--accent),var(--accent-2));
+    transition:width .25s ease;
+  }
+
   .filters{
+    position:relative;
+    grid-column:1 / -1;
     display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;
     background:var(--surface);padding:16px;border-radius:var(--radius);
-    border:1px solid var(--border);margin-bottom:20px;box-shadow:var(--shadow-sm);
+    border:1px solid var(--border);box-shadow:var(--shadow-sm);
   }
   .filters label{
     display:block;font-size:10.5px;font-weight:800;color:var(--text-3);
@@ -162,10 +182,24 @@
     outline:none;border-color:var(--accent);background-color:var(--surface);
     box-shadow:0 0 0 4px var(--accent-soft);
   }
+  .filters-title{
+    grid-column: 1 / -1;
+    display:flex;align-items:center;justify-content:space-between;gap:12px;
+    font-size:14px;font-weight:800;letter-spacing:-.01em;color:var(--text);
+    padding-bottom:10px;margin-bottom:4px;
+    border-bottom:1px solid var(--border-2);
+  }
+  .filters-clear{
+    border:1px solid var(--border);background:var(--surface-2);color:var(--text-2);
+    border-radius:8px;padding:5px 12px;font-size:11.5px;font-weight:700;
+    cursor:pointer;font-family:inherit;transition:all .15s ease;
+  }
+  .filters-clear:hover{
+    background:var(--danger-soft);color:var(--danger);border-color:var(--danger);
+  }
 
-  /* ============ KPI ============ */
   .kpis{
-    display:grid;grid-template-columns:repeat(6,1fr);gap:14px;margin-bottom:20px;
+    display:grid;grid-template-columns:repeat(6,1fr);gap:14px;
   }
   .kpi{
     background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
@@ -185,14 +219,14 @@
     box-shadow:0 6px 14px -6px rgba(79,70,229,.6);
   }
   .kpi .label{font-size:11px;color:var(--text-3);font-weight:700;text-transform:uppercase;letter-spacing:.5px}
-  .kpi .value{font-size:24px;font-weight:800;margin:4px 0 3px;line-height:1.15;letter-spacing:-.02em;word-break:break-word}
+  .kpi .value{font-size:22px;font-weight:800;margin:4px 0 3px;line-height:1.15;letter-spacing:-.02em;word-break:break-word}
   .kpi .sub{font-size:11.5px;color:var(--text-3)}
 
-  /* ============ PANELS GRID ============ */
   .panels{
     display:grid;grid-template-columns:repeat(12,1fr);gap:18px;
   }
   .panel{
+    position:relative;
     background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
     padding:18px;box-shadow:var(--shadow-sm);min-height:120px;
     display:flex;flex-direction:column;
@@ -202,9 +236,9 @@
   @keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
   .panel:hover{box-shadow:var(--shadow)}
   .panel.w7{grid-column:span 7}
+  .panel.w6{grid-column:span 6}
   .panel.w5{grid-column:span 5}
   .panel.w4{grid-column:span 4}
-  .panel.w6{grid-column:span 6}
   .panel.w12{grid-column:span 12}
   .panel.hidden{display:none!important}
 
@@ -212,6 +246,8 @@
     font-size:14px;font-weight:800;letter-spacing:-.01em;
     margin-bottom:14px;display:flex;justify-content:space-between;
     align-items:center;flex-wrap:wrap;gap:8px;
+    position:relative;
+    padding-left:22px;
   }
   .panel h2 .pill{
     font-size:11px;font-weight:700;color:var(--accent);
@@ -221,15 +257,72 @@
     font-size:11px;font-weight:600;color:var(--text-3);background:var(--surface-2);
     padding:3px 10px;border-radius:999px;
   }
-  .panel h2 .h-right{display:flex;gap:6px;align-items:center}
-  .panel h2 select{
-    border:1px solid var(--border);border-radius:8px;padding:4px 10px;font-size:11.5px;
-    background:var(--surface-2);color:var(--text);font-family:inherit;font-weight:600;
-    cursor:pointer;
-  }
-  .panel h2 select:focus{outline:none;border-color:var(--accent)}
+  .panel h2 .h-right{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
 
-  /* ============ TABLE ============ */
+  /* ============ DRAG HANDLE ============ */
+  .drag-handle{
+    position:absolute;
+    left:0;
+    top:50%;
+    transform:translateY(-50%);
+    width:16px;
+    height:22px;
+    display:inline-flex;align-items:center;justify-content:center;
+    cursor:grab;
+    color:var(--text-3);
+    border-radius:4px;
+    transition:background .15s ease, color .15s ease;
+    user-select:none;
+    -webkit-user-select:none;
+    touch-action:none;
+  }
+  .drag-handle:hover{background:var(--surface-2);color:var(--text)}
+  .drag-handle:active{cursor:grabbing}
+  .drag-handle svg{display:block;pointer-events:none}
+
+  /* ============ DRAG STATES ============ */
+  .panel.dragging,
+  .filters.dragging{
+    opacity:.45;
+    cursor:grabbing;
+  }
+  .panel.drag-over-before,
+  .filters.drag-over-before{
+    box-shadow: 0 -3px 0 0 var(--accent), var(--shadow-sm) !important;
+  }
+  .panel.drag-over-after,
+  .filters.drag-over-after{
+    box-shadow: 0 3px 0 0 var(--accent), var(--shadow-sm) !important;
+  }
+  .panel.drag-over-before, .panel.drag-over-after,
+  .filters.drag-over-before, .filters.drag-over-after{
+    transition: none;
+  }
+
+  .mini-select{
+    border:1px solid var(--border);background:var(--surface-2);color:var(--text-2);
+    border-radius:8px;padding:5px 9px;font-size:11.5px;font-weight:700;
+    font-family:inherit;cursor:pointer;transition:all .15s ease;
+    appearance:none;
+    background-image:linear-gradient(45deg,transparent 50%,var(--text-3) 50%),linear-gradient(135deg,var(--text-3) 50%,transparent 50%);
+    background-position:calc(100% - 12px) 50%,calc(100% - 8px) 50%;
+    background-size:4px 4px,4px 4px;background-repeat:no-repeat;
+    padding-right:22px;
+  }
+  .mini-select:hover{background-color:var(--surface);color:var(--text);border-color:var(--border-2)}
+  .mini-select:focus{
+    outline:none;border-color:var(--accent);background-color:var(--surface);
+    box-shadow:0 0 0 3px var(--accent-soft);color:var(--text);
+  }
+
+  .panel-close{
+    width:24px;height:24px;flex:0 0 24px;border-radius:8px;padding:0;
+    border:1px solid var(--border);background:var(--surface-2);color:var(--text-3);
+    font-size:11px;font-weight:800;line-height:1;cursor:pointer;font-family:inherit;
+    display:grid;place-items:center;transition:all .15s ease;
+  }
+  .panel-close:hover{background:var(--danger-soft);color:var(--danger);border-color:var(--danger)}
+
   .table-wrap{max-height:330px;overflow:auto;border-radius:10px;margin:-4px -4px 0}
   .table-wrap::-webkit-scrollbar{width:8px;height:8px}
   .table-wrap::-webkit-scrollbar-thumb{background:var(--scroll);border-radius:8px}
@@ -246,10 +339,14 @@
   tbody tr:hover{background:var(--surface-2)}
   .text-right{text-align:right}
   td .desc{color:var(--text-2);font-size:12px;max-width:280px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .tag{
+    display:inline-block;font-size:10.5px;font-weight:800;letter-spacing:.3px;
+    text-transform:uppercase;color:var(--accent);background:var(--accent-soft);
+    border-radius:999px;padding:3px 9px;white-space:nowrap;
+  }
 
-  /* ============ BAR ROWS ============ */
   .bar-row{
-    display:grid;grid-template-columns:130px 1fr 90px;gap:12px;align-items:center;
+    display:grid;grid-template-columns:minmax(90px,150px) 1fr 84px;gap:12px;align-items:center;
     margin:9px 0;font-size:12.5px;
   }
   .bar-row .bname{
@@ -259,9 +356,10 @@
   .bar-fill{height:100%;border-radius:999px;background:linear-gradient(90deg,var(--accent),var(--accent-2));transition:width .45s cubic-bezier(.2,.7,.3,1)}
   .bar-row .bval{text-align:right;font-weight:700;font-variant-numeric:tabular-nums}
 
-  .chart-container{position:relative;height:300px}
+  #mfrBars{display:grid;grid-template-columns:repeat(auto-fit,minmax(360px,1fr));gap:0 26px;align-content:start}
 
-  /* ============ DETAIL ============ */
+  .chart-container{position:relative;width:100%;height:clamp(280px,32vw,460px)}
+
   .detail-controls{
     display:flex;align-items:center;gap:10px;flex-wrap:wrap;
     font-size:12px;color:var(--text-2);margin-bottom:10px;
@@ -280,7 +378,6 @@
   .detail-wrap th{background:var(--surface)}
   .detail-wrap td.num{text-align:right;font-variant-numeric:tabular-nums;font-weight:600}
 
-  /* ============ RESPONSIVE ============ */
   @media (max-width:1200px){
     .kpis{grid-template-columns:repeat(3,1fr)}
     .panel.w7,.panel.w5,.panel.w6{grid-column:span 12}
@@ -293,9 +390,11 @@
     header{flex-direction:column;align-items:stretch}
     .header-actions{justify-content:space-between}
     .bar-row{grid-template-columns:90px 1fr 70px;font-size:11.5px}
+    #mfrBars{grid-template-columns:1fr}
+    .chart-container{height:clamp(220px,52vw,320px)}
+    .drag-handle{width:20px;height:26px}
   }
 
-  /* ============ SCROLLBAR GLOBAL ============ */
   ::-webkit-scrollbar{width:10px;height:10px}
   ::-webkit-scrollbar-thumb{background:var(--scroll);border-radius:10px}
   ::-webkit-scrollbar-track{background:transparent}
@@ -304,20 +403,19 @@
 <body>
 <div class="wrap">
 
-  <!-- HEADER -->
   <header>
     <div class="brand">
-      <div class="brand-mark">📊</div>
+      <img src="logo.png" alt="Logo" class="brand-mark">
       <div>
-        <h1>Dashboard <span>Sell‑out</span> · Versátil</h1>
-        <div class="muted">Arrastra tu Excel · detección automática de columnas (Cía, Folio, Fecha, Proveedor, Clave_Articulo, Descripción, Cantidad, Grupo, Vendedor, Clave Fabricante, Familia)</div>
+        <h1>Dashboard <span>Sell‑out</span></h1>
+        <div class="muted">Siempre Funciona</div>
       </div>
     </div>
     <div class="header-actions">
       <div class="view-dropdown" id="viewDropdown">
-        <button class="btn btn-ghost" id="viewBtn">⚙️ Paneles</button>
+        <button class="btn btn-ghost" id="viewBtn">⚙️ Mostrar / Ocultar Paneles</button>
         <div class="dropdown-menu" id="viewMenu">
-          <div class="dropdown-title">Mostrar paneles</div>
+          <div class="dropdown-title">Seleccione paneles</div>
           <label><input type="checkbox" data-panel="kpis" checked> KPIs principales</label>
           <label><input type="checkbox" data-panel="trend" checked> Evolución mensual</label>
           <label><input type="checkbox" data-panel="providers" checked> Sell-out por proveedor</label>
@@ -330,37 +428,33 @@
           <label><input type="checkbox" data-panel="detail" checked> Detalle de registros</label>
         </div>
       </div>
-      <button class="btn btn-ghost" id="themeBtn" title="Cambiar tema">🌙</button>
-      <button class="btn btn-ghost" id="exportBtn" title="Exportar CSV">⬇️ CSV</button>
+      <button class="btn btn-ghost" id="themeBtn" title="Cambiar tema">🌙 Modo oscuro</button>
+      <button class="btn btn-ghost" id="pdfBtn" title="Exportar a PDF">📄 PDF</button>
       <button class="btn" id="reloadBtn">🔄 Cargar Excel</button>
       <span id="status">Sin datos</span>
     </div>
   </header>
 
-  <!-- UPLOAD -->
   <div class="upload-zone" id="dropZone">
     <input type="file" id="fileInput" accept=".xlsx,.xls,.csv">
     <div class="hint">📂 Arrastra tu archivo Excel aquí o haz clic para seleccionar</div>
     <div class="sub">.xlsx · .xls · .csv · detecta automáticamente todas las columnas</div>
   </div>
 
-  <!-- FILTERS -->
-  <div class="filters" id="filters">
-    <div><label>Año</label><select id="year"><option>Todos</option></select></div>
-    <div><label>Tienda</label><select id="cia"><option>Todos</option></select></div>
-    <div><label>Proveedor</label><select id="line"><option>Todos</option></select></div>
-    <div><label>Familia</label><select id="family"><option>Todos</option></select></div>
-    <div><label>Grupo</label><select id="grupo"><option>Todos</option></select></div>
-    <div><label>Vendedor</label><select id="vendedor"><option>Todos</option></select></div>
-    <div><label>SKU</label><select id="sku"><option>Todos</option></select></div>
-    <div><label>Buscar</label><input id="search" type="text" placeholder="SKU, descripción, folio..."></div>
+  <div class="progress-wrap hidden" id="progressWrap">
+    <div class="progress-head">
+      <span id="progressLabel">Cargando…</span>
+      <span id="progressPct">0%</span>
+    </div>
+    <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
   </div>
 
-  <!-- PANELS GRID -->
   <div class="panels" id="panelsGrid">
 
-    <!-- KPIs -->
     <section class="panel w12" data-panel="kpis" id="pKpis">
+      <h2>📊 KPIs principales
+        <span class="h-right"><span class="pill-muted">Resumen del período</span></span>
+      </h2>
       <div class="kpis" id="kpis">
         <div class="kpi" style="--k1:#4f46e5;--k2:#6366f1"><div class="k-icon">📦</div><div class="label">Sell‑out total</div><div class="value" id="total">0</div><div class="sub">piezas filtradas</div></div>
         <div class="kpi" style="--k1:#059669;--k2:#10b981"><div class="k-icon">📈</div><div class="label">Variación anual</div><div class="value" id="growth">—</div><div class="sub">último vs anterior</div></div>
@@ -371,63 +465,91 @@
       </div>
     </section>
 
-    <!-- Trend -->
-    <section class="panel w7" data-panel="trend">
+    <div class="filters" id="filters">
+      <div class="filters-title">
+        <span>🔎 Filtros</span>
+        <button type="button" class="filters-clear" id="clearFilters">Limpiar</button>
+      </div>
+      <div><label>Año</label><select id="year"><option>Todos</option></select></div>
+      <div><label>Tienda</label><select id="cia"><option>Todos</option></select></div>
+      <div><label>Proveedor</label><select id="line"><option>Todos</option></select></div>
+      <div><label>Familia</label><select id="family"><option>Todos</option></select></div>
+      <div><label>Grupo</label><select id="grupo"><option>Todos</option></select></div>
+      <div><label>Vendedor</label><select id="vendedor"><option>Todos</option></select></div>
+      <div><label>SKU</label><select id="sku"><option>Todos</option></select></div>
+      <div><label>Buscar</label><input id="search" type="text" placeholder="SKU, descripción, folio..."></div>
+    </div>
+
+    <section class="panel w12" data-panel="trend" id="pTrend">
       <h2>📈 Evolución mensual
         <span class="h-right">
-          <select id="chartGroupBy">
-            <option value="year">Por año</option>
-            <option value="family">Por familia</option>
+          <span class="pill-muted">Series</span>
+          <select id="trendGroup" class="mini-select" title="Cómo agrupar las series del gráfico">
+            <option value="year">Año</option>
+            <option value="family">Familia</option>
           </select>
-          <select id="chartYear" style="display:none"></select>
         </span>
       </h2>
       <div class="chart-container"><canvas id="trendChart"></canvas></div>
     </section>
 
-    <!-- Providers -->
-    <section class="panel w5" data-panel="providers">
+    <section class="panel w6" data-panel="providers">
       <h2>🏢 Sell‑out por proveedor <span class="pill-muted">Top 10</span></h2>
       <div id="lineBars"></div>
     </section>
 
-    <!-- Families -->
-    <section class="panel w5" data-panel="families">
+    <section class="panel w6" data-panel="families">
       <h2>🏷️ Top familias <span class="pill-muted">Top 10</span></h2>
-      <div class="table-wrap"><table><thead><tr><th data-sort="name">Familia</th><th data-sort="value" class="text-right">Sell‑out</th></tr></thead><tbody id="familyTable"></tbody></table></div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th data-sort="name">Grupo</th>
+              <th data-sort="name">Familia</th>
+              <th data-sort="value" class="text-right">Sell‑out</th>
+            </tr>
+          </thead>
+          <tbody id="familyTable"></tbody>
+        </table>
+      </div>
     </section>
 
-    <!-- SKUs -->
-    <section class="panel w7" data-panel="skus">
+    <section class="panel w6" data-panel="skus">
       <h2>⭐ Top SKU <span class="pill-muted">Top 10</span></h2>
-      <div class="table-wrap"><table><thead><tr><th data-sort="name">SKU</th><th>Descripción</th><th data-sort="value" class="text-right">Sell‑out</th></tr></thead><tbody id="skuTable"></tbody></table></div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th data-sort="name">SKU</th>
+              <th>Descripción</th>
+              <th data-sort="value" class="text-right">Sell‑out</th>
+            </tr>
+          </thead>
+          <tbody id="skuTable"></tbody>
+        </table>
+      </div>
     </section>
 
-    <!-- Groups -->
-    <section class="panel w4" data-panel="groups">
-      <h2>🧩 Top grupos <span class="pill-muted">Top 8</span></h2>
+    <section class="panel w6" data-panel="groups">
+      <h2>🧩 Top grupos <span class="pill-muted">Top 10</span></h2>
       <div id="groupBars"></div>
     </section>
 
-    <!-- Sellers -->
-    <section class="panel w4" data-panel="sellers">
-      <h2>🧑‍💼 Top vendedores <span class="pill-muted">Top 8</span></h2>
+    <section class="panel w6" data-panel="sellers">
+      <h2>🧑‍💼 Top vendedores <span class="pill-muted">Top 10</span></h2>
       <div id="sellerBars"></div>
     </section>
 
-    <!-- Companies -->
-    <section class="panel w4" data-panel="companies">
-      <h2>🏬 Top Tiendas <span class="pill-muted">Top 8</span></h2>
+    <section class="panel w6" data-panel="companies">
+      <h2>🏬 Top Tiendas <span class="pill-muted">Top 10</span></h2>
       <div id="ciaBars"></div>
     </section>
 
-    <!-- Manufacturers -->
     <section class="panel w12" data-panel="manufacturers">
-      <h2>🔧 Top fabricantes <span class="pill-muted">Top 12</span></h2>
+      <h2>🔧 Top fabricantes <span class="pill-muted">Top 10</span></h2>
       <div id="mfrBars"></div>
     </section>
 
-    <!-- Detail -->
     <section class="panel w12" data-panel="detail">
       <h2>🧾 Detalle de registros <span class="pill-muted" id="detailCount">0</span></h2>
       <div class="detail-controls">
@@ -456,12 +578,14 @@
 
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <script>
 /* ============================================================
    UTILIDADES
 ============================================================ */
 const MONTHS = ['ENE','FEB','MAR','ABR','MAY','JUN','JUL','AGO','SEP','OCT','NOV','DIC'];
 const STORAGE_PREFIX = 'dash_v2_';
+const TOP_N = 10;
 
 const norm = s => String(s ?? '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim();
 const num = x => {
@@ -470,6 +594,7 @@ const num = x => {
   return isNaN(n) ? 0 : n;
 };
 const fmt = n => new Intl.NumberFormat('es-MX',{maximumFractionDigits:0}).format(n||0);
+const escapeHtml = s => String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
 function col(obj, candidates) {
   const keys = Object.keys(obj);
@@ -506,13 +631,27 @@ function toYM(v) {
 }
 
 /* ============================================================
-   EXTRACCIÓN (lista + pivot)
+   CLASIFICACIÓN DE FAMILIAS
+============================================================ */
+const FAM_STOP = new Set(['de','del','la','el','los','las','y','e','o','u','para','con','en','al','por','the','and']);
+function famGroup(name){
+  const s = String(name ?? '').trim();
+  if (!s || norm(s) === 'sin familia') return 'SIN FAMILIA';
+  const words = s.split(/[\s\-\/\_,\.]+/).filter(Boolean);
+  for (const w of words) {
+    const n = norm(w);
+    if (n && !FAM_STOP.has(n) && !/^\d+$/.test(n)) return w.toUpperCase();
+  }
+  return s.toUpperCase();
+}
+
+/* ============================================================
+   EXTRACCIÓN
 ============================================================ */
 function extractRows(rawRows) {
   if (!rawRows.length) return [];
   const keys = Object.keys(rawRows[0]);
 
-  // --- Pivot ---
   const monthPatterns = [/^\d{2}-\d{2}$/, /^[A-Za-z]{3}-\d{2}$/, /^\d{2}[A-Za-z]{3}$/];
   const monthCols = keys.filter(k => monthPatterns.some(p => p.test(String(k).trim())));
 
@@ -564,7 +703,6 @@ function extractRows(rawRows) {
     return out;
   }
 
-  // --- Formato lista ---
   const dateC  = ['fecha','date','periodo'];
   const yearC  = ['año','ano','year'];
   const monthC = ['mes','month'];
@@ -599,59 +737,120 @@ function extractRows(rawRows) {
 }
 
 /* ============================================================
-   ESTADO
+   ESTADO GLOBAL
 ============================================================ */
 let allRows = [];
 let chartInstance = null;
 let detailPage = 1;
+let pendingChartRender = false;   // guarda: chart no dibujado por tamaño 0
+let _retryScheduled = false;      // evita rAFs duplicados
 
 /* ============================================================
    TEMA
 ============================================================ */
 function applyTheme(theme) {
   document.body.dataset.theme = theme;
-  document.getElementById('themeBtn').textContent = theme === 'dark' ? '☀️' : '🌙';
-  try { localStorage.setItem(STORAGE_PREFIX + 'theme', theme); } catch(e){}
+  document.getElementById('themeBtn').textContent = theme === 'dark' ? '☀️ Modo claro' : '🌙 Modo oscuro';
   if (allRows.length) render();
+  if (chartInstance) setTimeout(() => chartInstance.resize(), 60);
 }
-function initTheme() {
-  const saved = localStorage.getItem(STORAGE_PREFIX + 'theme');
-  if (saved) applyTheme(saved);
-  else if (window.matchMedia('(prefers-color-scheme: dark)').matches) applyTheme('dark');
-  else applyTheme('light');
+function initTheme() { applyTheme('light'); }
+
+/* ============================================================
+   BARRA DE PROGRESO
+============================================================ */
+const progressWrap  = document.getElementById('progressWrap');
+const progressFill  = document.getElementById('progressFill');
+const progressPct   = document.getElementById('progressPct');
+const progressLabel = document.getElementById('progressLabel');
+let progressTimer = null;
+
+function setProgress(p, label){
+  const v = Math.max(0, Math.min(100, Math.round(p)));
+  progressFill.style.width = v + '%';
+  progressPct.textContent  = v + '%';
+  if (label) progressLabel.textContent = label;
+}
+function showProgress(label){
+  progressWrap.classList.remove('hidden');
+  setProgress(4, label || 'Iniciando…');
+}
+function startAutoProgress(){
+  clearInterval(progressTimer);
+  progressTimer = setInterval(() => {
+    const cur = parseFloat(progressFill.style.width) || 0;
+    if (cur >= 92) return;
+    setProgress(cur + Math.max(0.6, (92 - cur) * 0.08));
+  }, 140);
+}
+function stopAutoProgress(){ clearInterval(progressTimer); progressTimer = null; }
+function hideProgress(delay = 700){
+  setTimeout(() => { progressWrap.classList.add('hidden'); setProgress(0, 'Cargando…'); }, delay);
+}
+const nextFrame = () => new Promise(r => requestAnimationFrame(() => setTimeout(r, 0)));
+
+function readArrayBuffer(file){
+  if (file.arrayBuffer) return file.arrayBuffer();
+  return new Promise((res, rej) => {
+    const fr = new FileReader();
+    fr.onload = e => res(e.target.result);
+    fr.onerror = () => rej(new Error('No se pudo leer el archivo'));
+    fr.readAsArrayBuffer(file);
+  });
 }
 
 /* ============================================================
    CARGA DE ARCHIVO
 ============================================================ */
-function loadFile(file) {
-  const reader = new FileReader();
-  reader.onload = e => {
-    try {
-      const data = new Uint8Array(e.target.result);
-      const wb = XLSX.read(data, { type:'array', cellDates:true });
-      const sheet = wb.Sheets[wb.SheetNames[0]];
-      const rawTyped = XLSX.utils.sheet_to_json(sheet, { defval:'' });
-      const rawStr   = XLSX.utils.sheet_to_json(sheet, { defval:'', raw:false });
-      if (!rawTyped.length) { setStatus('El archivo está vacío.', 'error'); return; }
+async function loadFile(file) {
+  if (!file) return;
+  showProgress('Leyendo archivo…');
+  setProgress(8);
+  startAutoProgress();
 
-      let rows = extractRows(rawTyped);
-      if (!rows.length) rows = extractRows(rawStr);
-      if (!rows.length) { setStatus('No se pudieron extraer datos. Revisa las columnas.', 'error'); return; }
+  try {
+    const buf = await readArrayBuffer(file);
+    setProgress(32, 'Procesando Excel…');
+    await nextFrame();
 
-      allRows = rows;
-      detailPage = 1;
-      setStatus(`✅ ${rows.length} registros cargados`, 'ok');
-      try { localStorage.setItem(STORAGE_PREFIX + 'data', JSON.stringify(rows)); } catch(e){}
-      populateFilters();
-      populateChartYears();
-      render();
-    } catch (err) {
-      setStatus('Error al leer el archivo: ' + err.message, 'error');
-      console.error(err);
-    }
-  };
-  reader.readAsArrayBuffer(file);
+    const wb = XLSX.read(new Uint8Array(buf), { type:'array', cellDates:true });
+    const sheetName = wb.SheetNames[0];
+    const sheet = sheetName ? wb.Sheets[sheetName] : null;
+    if (!sheet) throw new Error('El archivo no contiene hojas.');
+
+    const rawTyped = XLSX.utils.sheet_to_json(sheet, { defval:'' });
+    const rawStr   = XLSX.utils.sheet_to_json(sheet, { defval:'', raw:false });
+    if (!rawTyped.length) throw new Error('El archivo está vacío.');
+
+    setProgress(58, 'Extrayendo registros…');
+    await nextFrame();
+
+    let rows = extractRows(rawTyped);
+    if (!rows.length) rows = extractRows(rawStr);
+    if (!rows.length) throw new Error('No se pudieron extraer datos. Revisa las columnas.');
+
+    setProgress(84, 'Construyendo dashboard…');
+    await nextFrame();
+
+    allRows = rows;
+    detailPage = 1;
+    try { localStorage.setItem(STORAGE_PREFIX + 'data', JSON.stringify(rows)); } catch(e){}
+
+    populateFilters();
+    render();
+
+    setProgress(100, `✅ ${rows.length} registros cargados`);
+    setStatus(`✅ ${rows.length} registros cargados`, 'ok');
+    stopAutoProgress();
+    hideProgress(750);
+
+  } catch (err) {
+    stopAutoProgress();
+    setProgress(100, '❌ ' + (err.message || 'Error'));
+    hideProgress(1600);
+    setStatus('Error: ' + (err.message || 'no se pudo leer el archivo'), 'error');
+    console.error(err);
+  }
 }
 
 /* ============================================================
@@ -687,7 +886,18 @@ function groupBy(data, key) {
 }
 
 /* ============================================================
-   RENDER
+   PALETA
+============================================================ */
+function trendPalette() {
+  return [
+    '#4f46e5','#059669','#dc2626','#d97706','#7c3aed','#0891b2','#db2777','#65a30d',
+    '#ea580c','#14b8a6','#6366f1','#f43f5e','#0ea5e9','#a16207','#9333ea','#16a34a',
+    '#e11d48','#2563eb','#ca8a04','#0d9488','#8b5cf6','#f97316','#22c55e','#eab308'
+  ];
+}
+
+/* ============================================================
+   RENDER PRINCIPAL
 ============================================================ */
 function render() {
   const data = getFiltered();
@@ -696,7 +906,7 @@ function render() {
   if (!data.length) {
     ['total','growth','leader','topfam','avgmonth','peakmonth'].forEach(id => document.getElementById(id).textContent = id==='total'?'0':'—');
     ['lineBars','groupBars','sellerBars','ciaBars','mfrBars'].forEach(id => document.getElementById(id).innerHTML = empty);
-    document.getElementById('familyTable').innerHTML = '<tr><td colspan="2" class="muted" style="text-align:center;padding:18px;">—</td></tr>';
+    document.getElementById('familyTable').innerHTML = '<tr><td colspan="3" class="muted" style="text-align:center;padding:18px;">—</td></tr>';
     document.getElementById('skuTable').innerHTML    = '<tr><td colspan="3" class="muted" style="text-align:center;padding:18px;">—</td></tr>';
     document.getElementById('detailBody').innerHTML  = '<tr><td colspan="11" class="muted" style="text-align:center;padding:18px;">—</td></tr>';
     document.getElementById('detailCount').textContent = '0';
@@ -705,22 +915,21 @@ function render() {
     return;
   }
 
-  /* ---------- KPIs ---------- */
   const total = data.reduce((s,r)=>s+r.value,0);
   document.getElementById('total').textContent = fmt(total);
 
   const years = [...new Set(data.map(r=>r.year))].sort((a,b)=>a-b);
+  const growthEl = document.getElementById('growth');
   if (years.length >= 2) {
     const last = years[years.length-1], prev = years[years.length-2];
     const sL = data.filter(r=>r.year===last).reduce((s,r)=>s+r.value,0);
     const sP = data.filter(r=>r.year===prev).reduce((s,r)=>s+r.value,0);
     const g = sP ? ((sL/sP - 1) * 100) : 0;
-    const el = document.getElementById('growth');
-    el.textContent = (g>=0?'+':'') + g.toFixed(1) + '%';
-    el.style.color = g >= 0 ? 'var(--success)' : 'var(--danger)';
+    growthEl.textContent = (g>=0?'+':'') + g.toFixed(1) + '%';
+    growthEl.style.color = g >= 0 ? 'var(--success)' : 'var(--danger)';
   } else {
-    document.getElementById('growth').textContent = '—';
-    document.getElementById('growth').style.color = '';
+    growthEl.textContent = '—';
+    growthEl.style.color = '';
   }
 
   const lineMap = groupBy(data, 'line');
@@ -738,8 +947,7 @@ function render() {
   const peak = [...monthMap.entries()].sort((a,b)=>b[1]-a[1])[0];
   document.getElementById('peakmonth').textContent = peak ? MONTHS[peak[0]-1] + ' · ' + fmt(peak[1]) : '—';
 
-  /* ---------- Barras helper ---------- */
-  const barHTML = (map, top=10) => {
+  const barHTML = (map, top = TOP_N) => {
     const sorted = [...map.entries()].sort((a,b)=>b[1]-a[1]).slice(0, top);
     if (!sorted.length) return empty;
     const max = sorted[0][1] || 1;
@@ -752,21 +960,24 @@ function render() {
     `).join('');
   };
 
-  document.getElementById('lineBars').innerHTML = barHTML(lineMap, 10);
+  document.getElementById('lineBars').innerHTML = barHTML(lineMap, TOP_N);
+  document.getElementById('groupBars').innerHTML  = barHTML(groupBy(data, 'grupo'), TOP_N);
+  document.getElementById('sellerBars').innerHTML = barHTML(groupBy(data, 'vendedor'), TOP_N);
+  document.getElementById('ciaBars').innerHTML    = barHTML(groupBy(data, 'cia'), TOP_N);
+  document.getElementById('mfrBars').innerHTML    = barHTML(groupBy(data, 'fabricante'), TOP_N);
 
-  document.getElementById('groupBars').innerHTML  = barHTML(groupBy(data, 'grupo'), 8);
-  document.getElementById('sellerBars').innerHTML = barHTML(groupBy(data, 'vendedor'), 8);
-  document.getElementById('ciaBars').innerHTML    = barHTML(groupBy(data, 'cia'), 8);
-  document.getElementById('mfrBars').innerHTML    = barHTML(groupBy(data, 'fabricante'), 12);
-
-  /* ---------- Tablas ---------- */
-  const sortedFams = [...famMap.entries()].sort((a,b)=>b[1]-a[1]).slice(0, 10);
+  const sortedFams = [...famMap.entries()].sort((a,b)=>b[1]-a[1]).slice(0, TOP_N);
   document.getElementById('familyTable').innerHTML = sortedFams.length
-    ? sortedFams.map(([n,v]) => `<tr><td>${escapeHtml(n)}</td><td class="text-right"><b>${fmt(v)}</b></td></tr>`).join('')
-    : '<tr><td colspan="2" class="muted" style="text-align:center;padding:18px;">—</td></tr>';
+    ? sortedFams.map(([n,v]) => `
+        <tr>
+          <td><span class="tag">${escapeHtml(famGroup(n))}</span></td>
+          <td title="${escapeHtml(n)}">${escapeHtml(n)}</td>
+          <td class="text-right"><b>${fmt(v)}</b></td>
+        </tr>`).join('')
+    : '<tr><td colspan="3" class="muted" style="text-align:center;padding:18px;">—</td></tr>';
 
   const skuMap = groupBy(data, 'sku');
-  const sortedSkus = [...skuMap.entries()].sort((a,b)=>b[1]-a[1]).slice(0, 10);
+  const sortedSkus = [...skuMap.entries()].sort((a,b)=>b[1]-a[1]).slice(0, TOP_N);
   document.getElementById('skuTable').innerHTML = sortedSkus.length
     ? sortedSkus.map(([sku,v]) => {
         const d = data.find(r=>r.sku===sku)?.desc || '—';
@@ -774,19 +985,13 @@ function render() {
       }).join('')
     : '<tr><td colspan="3" class="muted" style="text-align:center;padding:18px;">—</td></tr>';
 
-  /* ---------- Detalle ---------- */
   renderDetail(data);
-
-  /* ---------- Gráfico ---------- */
-  populateChartYears();
   updateChart(data);
   saveFilters();
 }
 
-function escapeHtml(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
-
 /* ============================================================
-   DETALLE + PAGINACIÓN
+   DETALLE
 ============================================================ */
 function renderDetail(data) {
   document.getElementById('detailCount').textContent = fmt(data.length) + ' registros';
@@ -820,99 +1025,136 @@ function renderDetail(data) {
 }
 
 /* ============================================================
-   GRÁFICO
+   GRÁFICO DE TENDENCIA
+   - Eje X siempre ENE..DIC
+   - Modo "Año": una línea por año
+   - Modo "Familia": una línea por familia
+   - GUARDA: si el canvas tiene tamaño 0 (panel oculto), reintenta después
 ============================================================ */
 function updateChart(data) {
   const canvas = document.getElementById('trendChart');
   if (!canvas) return;
+
+  /* ---- GUARDA contra "canvas has width 0" ---- */
+  const rect = canvas.getBoundingClientRect();
+  if (rect.width === 0 || rect.height === 0) {
+    pendingChartRender = true;
+    if (!_retryScheduled) {
+      _retryScheduled = true;
+      requestAnimationFrame(() => {
+        _retryScheduled = false;
+        const r2 = canvas.getBoundingClientRect();
+        if (r2.width > 0 && r2.height > 0 && pendingChartRender) {
+          pendingChartRender = false;
+          updateChart(getFiltered());
+        }
+      });
+    }
+    return;
+  }
+  pendingChartRender = false;
+
   const ctx = canvas.getContext('2d');
   if (chartInstance) { chartInstance.destroy(); chartInstance = null; }
 
   const isDark = document.body.dataset.theme === 'dark';
   const textColor = isDark ? '#94a3b8' : '#64748b';
   const gridColor = isDark ? 'rgba(148,163,184,.1)' : 'rgba(15,23,42,.06)';
+  const palette = trendPalette();
 
-  const mode = document.getElementById('chartGroupBy').value;
-  const years = [...new Set(data.map(r=>r.year))].sort((a,b)=>a-b);
+  const modeEl = document.getElementById('trendGroup');
+  const mode = modeEl ? modeEl.value : 'year';
 
-  if (!years.length) {
-    chartInstance = new Chart(ctx, {
-      type:'line', data:{labels:MONTHS,datasets:[]},
-      options:{responsive:true,maintainAspectRatio:false,
-        plugins:{legend:{display:false}},
-        scales:{y:{beginAtZero:true,grid:{color:gridColor},ticks:{color:textColor}},x:{grid:{display:false},ticks:{color:textColor}}}
-      }
-    });
-    return;
-  }
-
-  const palette = ['#4f46e5','#059669','#dc2626','#d97706','#7c3aed','#0891b2','#db2777','#65a30d','#ea580c','#14b8a6','#6366f1','#f43f5e'];
   let datasets = [];
 
-  if (mode === 'year') {
-    datasets = years.map((year,i) => {
-      const m = new Array(12).fill(0);
-      data.filter(r=>r.year===year).forEach(r => { if (r.month>=1 && r.month<=12) m[r.month-1] += r.value; });
+  if (mode === 'family') {
+    const buckets = new Map();
+    data.forEach(r => {
+      if (!r.month || r.month < 1 || r.month > 12) return;
+      const fam = r.family || 'SIN FAMILIA';
+      if (!buckets.has(fam)) buckets.set(fam, { total: 0, months: new Array(12).fill(null) });
+      const b = buckets.get(fam);
+      b.total += r.value;
+      b.months[r.month - 1] = (b.months[r.month - 1] || 0) + r.value;
+    });
+    const sorted = [...buckets.entries()].sort((a, b) => b[1].total - a[1].total);
+    const n = sorted.length;
+    datasets = sorted.map(([fam, info], i) => {
+      const color = palette[i % palette.length];
       return {
-        label: String(year), data: m,
-        borderColor: palette[i%palette.length],
-        backgroundColor: hexA(palette[i%palette.length], .12),
-        fill: true, tension: 0.35, pointRadius: 3, pointHoverRadius: 6,
-        borderWidth: 2.5
+        label: fam,
+        data: info.months,
+        borderColor: color,
+        backgroundColor: hexA(color, .12),
+        fill: false,
+        tension: 0.35,
+        spanGaps: true,
+        pointRadius: n > 12 ? 0 : (n > 6 ? 2 : 3),
+        pointHoverRadius: 6,
+        borderWidth: n > 12 ? 1.8 : 2.5
       };
     });
   } else {
-    const sel = document.getElementById('chartYear');
-    let selYear = parseInt(sel.value);
-    if (!selYear || !years.includes(selYear)) selYear = years[years.length-1];
-    const yearData = data.filter(r=>r.year===selYear);
-
-    const famMap = new Map();
-    yearData.forEach(r => famMap.set(r.family, (famMap.get(r.family)||0) + r.value));
-    const sorted = [...famMap.entries()].sort((a,b)=>b[1]-a[1]);
-    const TOP = 10;
-    const topFams = sorted.slice(0, TOP).map(x=>x[0]);
-    const otherFams = sorted.slice(TOP).map(x=>x[0]);
-
-    datasets = topFams.map((fam,i) => {
-      const m = new Array(12).fill(0);
-      yearData.filter(r=>r.family===fam).forEach(r => { if (r.month>=1 && r.month<=12) m[r.month-1] += r.value; });
+    const years = [...new Set(data.map(r => r.year))]
+      .filter(y => y)
+      .sort((a, b) => a - b);
+    datasets = years.map((year, i) => {
+      const months = new Array(12).fill(null);
+      data.filter(r => r.year === year).forEach(r => {
+        if (r.month >= 1 && r.month <= 12) {
+          months[r.month - 1] = (months[r.month - 1] || 0) + r.value;
+        }
+      });
+      const color = palette[i % palette.length];
       return {
-        label: fam, data: m,
-        borderColor: palette[i%palette.length],
-        backgroundColor: hexA(palette[i%palette.length], .12),
-        fill:false, tension:0.35, pointRadius:3, pointHoverRadius:6, borderWidth:2.5
+        label: String(year),
+        data: months,
+        borderColor: color,
+        backgroundColor: hexA(color, .12),
+        fill: false,
+        tension: 0.35,
+        spanGaps: true,
+        pointRadius: 3,
+        pointHoverRadius: 6,
+        borderWidth: 2.5
       };
     });
-
-    if (otherFams.length) {
-      const m = new Array(12).fill(0);
-      yearData.filter(r=>otherFams.includes(r.family)).forEach(r => { if (r.month>=1 && r.month<=12) m[r.month-1] += r.value; });
-      datasets.push({
-        label: `Otras (${otherFams.length})`, data:m,
-        borderColor:'#94a3b8', backgroundColor:'rgba(148,163,184,.15)',
-        borderDash:[6,4], fill:false, tension:0.35, pointRadius:2, borderWidth:2
-      });
-    }
   }
 
+  const nKeys = datasets.length;
+
   chartInstance = new Chart(ctx, {
-    type:'line',
-    data:{labels:MONTHS,datasets},
-    options:{
-      responsive:true,maintainAspectRatio:false,
-      interaction:{mode:'nearest',intersect:false},
-      plugins:{
-        legend:{position:'top',labels:{boxWidth:10,usePointStyle:true,padding:12,color:textColor,font:{size:11,family:'Inter'}}},
-        tooltip:{
-          backgroundColor:isDark?'#0f172a':'#0f172a',
-          titleColor:'#f1f5f9',bodyColor:'#e2e8f0',padding:10,cornerRadius:8,
-          callbacks:{label: c => c.dataset.label + ': ' + fmt(c.parsed.y)}
+    type: 'line',
+    data: { labels: MONTHS, datasets },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      interaction: { mode: 'nearest', intersect: false },
+      plugins: {
+        legend: {
+          display: nKeys > 0,
+          position: 'top',
+          labels: {
+            boxWidth: 10, usePointStyle: true, padding: 10,
+            color: textColor, font: { size: 11, family: 'Inter' }
+          }
+        },
+        tooltip: {
+          backgroundColor: '#0f172a',
+          titleColor: '#f1f5f9', bodyColor: '#e2e8f0',
+          padding: 10, cornerRadius: 8,
+          callbacks: { label: c => c.dataset.label + ': ' + fmt(c.parsed.y) }
         }
       },
-      scales:{
-        y:{beginAtZero:true,grid:{color:gridColor},ticks:{color:textColor,font:{family:'Inter'},callback:v=>fmt(v)}},
-        x:{grid:{display:false},ticks:{color:textColor,font:{family:'Inter',size:10}}}
+      scales: {
+        y: {
+          beginAtZero: true,
+          grid: { color: gridColor },
+          ticks: { color: textColor, font: { family: 'Inter' }, callback: v => fmt(v) }
+        },
+        x: {
+          grid: { display: false },
+          ticks: { color: textColor, font: { family: 'Inter', size: 10 } }
+        }
       }
     }
   });
@@ -924,20 +1166,7 @@ function hexA(hex, a) {
 }
 
 /* ============================================================
-   AÑOS DEL GRÁFICO
-============================================================ */
-function populateChartYears() {
-  const sel = document.getElementById('chartYear');
-  if (!sel) return;
-  const years = [...new Set(allRows.map(r=>r.year))].sort((a,b)=>a-b);
-  const current = sel.value;
-  sel.innerHTML = years.map(y => `<option value="${y}">${y}</option>`).join('');
-  if (current && years.map(String).includes(current)) sel.value = current;
-  else if (years.length) sel.value = years[years.length-1];
-}
-
-/* ============================================================
-   FILTROS: populate / persistencia
+   FILTROS populate/persistencia
 ============================================================ */
 function populateFilters() {
   const fields = {
@@ -952,16 +1181,33 @@ function populateFilters() {
   for (const [id, fn] of Object.entries(fields)) {
     const select = document.getElementById(id);
     if (!select) continue;
-    const vals = [...new Set(allRows.map(fn))].filter(v => v && v !== 'undefined' && v !== '').sort();
+    const vals = [...new Set(allRows.map(fn))].filter(v => v && v !== 'undefined' && v !== '').sort((a,b)=>a.localeCompare(b,'es'));
     const current = select.value;
-    select.innerHTML = '<option>Todos</option>' + vals.map(v => `<option>${escapeHtml(v)}</option>`).join('');
+
+    if (id === 'family') {
+      const groups = new Map();
+      vals.forEach(v => {
+        const g = famGroup(v);
+        if (!groups.has(g)) groups.set(g, []);
+        groups.get(g).push(v);
+      });
+      const sortedGroups = [...groups.keys()].sort((a,b)=>a.localeCompare(b,'es'));
+      select.innerHTML = '<option>Todos</option>' + sortedGroups.map(g =>
+        `<optgroup label="${escapeHtml(g)}">` +
+          groups.get(g).map(v => `<option>${escapeHtml(v)}</option>`).join('') +
+        `</optgroup>`
+      ).join('');
+    } else {
+      select.innerHTML = '<option>Todos</option>' + vals.map(v => `<option>${escapeHtml(v)}</option>`).join('');
+    }
+
     if (current && vals.includes(current)) select.value = current;
   }
   loadFilters();
 }
 function saveFilters() {
   const filters = {};
-  ['year','cia','line','family','grupo','vendedor','sku','search'].forEach(id => {
+  ['year','cia','line','family','grupo','vendedor','sku','search','trendGroup'].forEach(id => {
     const el = document.getElementById(id);
     if (el) filters[id] = el.value;
   });
@@ -972,7 +1218,7 @@ function loadFilters() {
     const raw = localStorage.getItem(STORAGE_PREFIX + 'filters');
     if (!raw) return;
     const f = JSON.parse(raw);
-    ['year','cia','line','family','grupo','vendedor','sku','search'].forEach(id => {
+    ['year','cia','line','family','grupo','vendedor','sku','search','trendGroup'].forEach(id => {
       const el = document.getElementById(id);
       if (el && f[id] !== undefined) el.value = f[id];
     });
@@ -982,6 +1228,23 @@ function loadFilters() {
 /* ============================================================
    VISIBILIDAD DE PANELES
 ============================================================ */
+function setPanelVisible(id, visible, persist = true) {
+  const el = document.querySelector(`.panel[data-panel="${id}"]`);
+  if (!el) return;
+  el.classList.toggle('hidden', !visible);
+  const cb = document.querySelector(`#viewMenu input[data-panel="${id}"]`);
+  if (cb) cb.checked = visible;
+  if (persist) savePanelVisibility();
+
+  if (visible && allRows.length) {
+    requestAnimationFrame(() => {
+      render();
+      if (id === 'trend' && pendingChartRender) {
+        requestAnimationFrame(() => updateChart(getFiltered()));
+      }
+    });
+  }
+}
 function initPanelVisibility() {
   let state = {};
   try { state = JSON.parse(localStorage.getItem(STORAGE_PREFIX + 'panels') || '{}'); } catch(e){}
@@ -1002,24 +1265,235 @@ function savePanelVisibility() {
 }
 
 /* ============================================================
-   EXPORT CSV
+   CONTROLES DEL PANEL (drag handle + close)
 ============================================================ */
-function exportCSV() {
-  const data = getFiltered();
-  if (!data.length) { setStatus('Nada que exportar', 'error'); return; }
-  const head = ['Año','Mes','Cía','Folio','Proveedor','Familia','Grupo','Vendedor','Fabricante','SKU','Descripción','Cantidad'];
-  const lines = [head.join(',')];
-  for (const r of data) {
-    const row = [r.year, MONTHS[(r.month||1)-1], r.cia, r.folio, r.line, r.family, r.grupo, r.vendedor, r.fabricante, r.sku, r.desc, r.value];
-    lines.push(row.map(v => `"${String(v??'').replace(/"/g,'""')}"`).join(','));
+function initPanelControls() {
+  document.querySelectorAll('.panel[data-panel]').forEach(panel => {
+    const h2 = panel.querySelector('h2');
+    if (!h2) return;
+
+    // Asegura contenedor .h-right
+    let right = h2.querySelector('.h-right');
+    if (!right) {
+      right = document.createElement('span');
+      right.className = 'h-right';
+      h2.appendChild(right);
+    }
+
+    // Handle de arrastre
+    if (!h2.querySelector('.drag-handle')) {
+      const handle = document.createElement('span');
+      handle.className = 'drag-handle';
+      handle.title = 'Arrastra para mover el panel';
+      handle.setAttribute('aria-label', 'Mover panel');
+      handle.innerHTML =
+        '<svg width="10" height="16" viewBox="0 0 10 16" fill="currentColor" aria-hidden="true">' +
+          '<circle cx="2.5" cy="3" r="1.3"/>' +
+          '<circle cx="7.5" cy="3" r="1.3"/>' +
+          '<circle cx="2.5" cy="8" r="1.3"/>' +
+          '<circle cx="7.5" cy="8" r="1.3"/>' +
+          '<circle cx="2.5" cy="13" r="1.3"/>' +
+          '<circle cx="7.5" cy="13" r="1.3"/>' +
+        '</svg>';
+      h2.insertBefore(handle, h2.firstChild);
+    }
+
+    // Botón cerrar
+    if (!right.querySelector('.panel-close')) {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'panel-close';
+      btn.textContent = '✕';
+      btn.title = 'Cerrar panel';
+      btn.setAttribute('aria-label', 'Cerrar panel');
+      btn.addEventListener('click', e => {
+        e.stopPropagation();
+        setPanelVisible(panel.dataset.panel, false);
+      });
+      right.appendChild(btn);
+    }
+  });
+}
+
+/* ============================================================
+   DRAG & DROP DE PANELES
+============================================================ */
+let draggedPanel = null;
+
+function initPanelDragAndDrop() {
+  const grid = document.getElementById('panelsGrid');
+  if (!grid) return;
+
+  const targets = [...grid.children].filter(el => el.classList.contains('panel') || el.id === 'filters');
+
+  targets.forEach(el => {
+    const isPanel = el.classList.contains('panel');
+
+    /* --- Solo los paneles son arrastrables y solo desde el handle --- */
+    if (isPanel) {
+      el.addEventListener('mousedown', e => {
+        el.draggable = !!e.target.closest('.drag-handle');
+      });
+      el.addEventListener('mouseup', () => { el.draggable = false; });
+
+      el.addEventListener('dragstart', e => {
+        if (!el.draggable) { e.preventDefault(); return; }
+        draggedPanel = el;
+        el.classList.add('dragging');
+        try {
+          e.dataTransfer.effectAllowed = 'move';
+          e.dataTransfer.setData('text/plain', el.dataset.panel || '');
+        } catch(_) {}
+      });
+
+      el.addEventListener('dragend', () => {
+        el.classList.remove('dragging');
+        el.draggable = false;
+        draggedPanel = null;
+        clearDragIndicators();
+        savePanelOrder();
+        if (chartInstance) setTimeout(() => chartInstance.resize(), 80);
+      });
+    }
+
+    /* --- Todos (paneles + filtros) son drop targets --- */
+    el.addEventListener('dragover', e => {
+      if (!draggedPanel || draggedPanel === el) return;
+      e.preventDefault();
+      try { e.dataTransfer.dropEffect = 'move'; } catch(_) {}
+
+      const rect = el.getBoundingClientRect();
+      const before = (e.clientY - rect.top) < (rect.height / 2);
+      clearDragIndicators();
+      el.classList.add(before ? 'drag-over-before' : 'drag-over-after');
+    });
+
+    el.addEventListener('dragleave', e => {
+      if (el.contains(e.relatedTarget)) return;
+      el.classList.remove('drag-over-before', 'drag-over-after');
+    });
+
+    el.addEventListener('drop', e => {
+      e.preventDefault();
+      if (!draggedPanel || draggedPanel === el) return;
+
+      const rect = el.getBoundingClientRect();
+      const before = (e.clientY - rect.top) < (rect.height / 2);
+
+      if (before) {
+        grid.insertBefore(draggedPanel, el);
+      } else {
+        grid.insertBefore(draggedPanel, el.nextSibling);
+      }
+      clearDragIndicators();
+      savePanelOrder();
+    });
+  });
+}
+
+function clearDragIndicators() {
+  document.querySelectorAll('.drag-over-before, .drag-over-after').forEach(el => {
+    el.classList.remove('drag-over-before', 'drag-over-after');
+  });
+}
+
+function savePanelOrder() {
+  const grid = document.getElementById('panelsGrid');
+  if (!grid) return;
+  const order = [...grid.children].map(el => {
+    if (el.id === 'filters') return 'filters';
+    if (el.dataset && el.dataset.panel) return el.dataset.panel;
+    return null;
+  }).filter(Boolean);
+  try { localStorage.setItem(STORAGE_PREFIX + 'order', JSON.stringify(order)); } catch(_) {}
+}
+
+function restorePanelOrder() {
+  try {
+    const raw = localStorage.getItem(STORAGE_PREFIX + 'order');
+    if (!raw) return;
+    const order = JSON.parse(raw);
+    if (!Array.isArray(order) || !order.length) return;
+    const grid = document.getElementById('panelsGrid');
+    if (!grid) return;
+    order.forEach(id => {
+      const el = id === 'filters'
+        ? document.getElementById('filters')
+        : grid.querySelector(`.panel[data-panel="${id}"]`);
+      if (el) grid.appendChild(el);
+    });
+  } catch(_) {}
+}
+
+/* ============================================================
+   EXPORTAR A PDF
+============================================================ */
+async function exportPDF() {
+  if (!allRows.length) { setStatus('Carga datos primero para exportar', 'error'); return; }
+
+  const btn = document.getElementById('pdfBtn');
+  const originalHTML = btn.innerHTML;
+  btn.disabled = true;
+  btn.innerHTML = '⏳ Generando…';
+  setStatus('📄 Generando PDF…', 'info');
+
+  const wasDark = document.body.dataset.theme === 'dark';
+  const uploadZone = document.getElementById('dropZone');
+  const progressWrapEl = document.getElementById('progressWrap');
+  const closeBtns = document.querySelectorAll('.panel-close');
+  const dragHandles = document.querySelectorAll('.drag-handle');
+  const scrollables = document.querySelectorAll('.table-wrap, .detail-wrap');
+
+  const savedUpload = uploadZone.style.display;
+  const savedProgress = progressWrapEl.style.display;
+  const savedScroll = [];
+  scrollables.forEach((el, i) => {
+    savedScroll[i] = { maxHeight: el.style.maxHeight, overflow: el.style.overflow };
+  });
+
+  try {
+    if (wasDark) applyTheme('light');
+
+    scrollables.forEach(el => { el.style.maxHeight = 'none'; el.style.overflow = 'visible'; });
+    uploadZone.style.display = 'none';
+    progressWrapEl.style.display = 'none';
+    closeBtns.forEach(b => b.style.display = 'none');
+    dragHandles.forEach(b => b.style.display = 'none');
+
+    await new Promise(r => setTimeout(r, 350));
+    if (chartInstance) { chartInstance.resize(); chartInstance.update('none'); }
+    await new Promise(r => setTimeout(r, 250));
+
+    const element = document.querySelector('.wrap');
+    const filename = `sellout_${new Date().toISOString().slice(0,10)}.pdf`;
+
+    await html2pdf().set({
+      margin: [8, 8, 10, 8],
+      filename,
+      image: { type: 'jpeg', quality: 0.95 },
+      html2canvas: { scale: 2, useCORS: true, logging: false, backgroundColor: '#f4f6fb', windowWidth: element.scrollWidth },
+      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+      pagebreak: { mode: ['css', 'legacy'], avoid: ['.panel', '.kpi', '.bar-row'] }
+    }).from(element).save();
+
+    setStatus('✅ PDF exportado correctamente', 'ok');
+  } catch (err) {
+    console.error(err);
+    setStatus('Error al generar PDF', 'error');
+  } finally {
+    if (wasDark) applyTheme('dark');
+    scrollables.forEach((el, i) => {
+      el.style.maxHeight = savedScroll[i].maxHeight;
+      el.style.overflow = savedScroll[i].overflow;
+    });
+    uploadZone.style.display = savedUpload;
+    progressWrapEl.style.display = savedProgress;
+    closeBtns.forEach(b => b.style.display = '');
+    dragHandles.forEach(b => b.style.display = '');
+    btn.disabled = false;
+    btn.innerHTML = originalHTML;
+    if (chartInstance) setTimeout(() => chartInstance.resize(), 120);
   }
-  const blob = new Blob(['\uFEFF' + lines.join('\n')], { type:'text/csv;charset=utf-8' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url; a.download = `sellout_${new Date().toISOString().slice(0,10)}.csv`;
-  a.click();
-  URL.revokeObjectURL(url);
-  setStatus('⬇️ CSV exportado', 'ok');
 }
 
 /* ============================================================
@@ -1049,23 +1523,34 @@ dropZone.addEventListener('drop', e => {
 });
 dropZone.addEventListener('click', () => document.getElementById('fileInput').click());
 document.getElementById('reloadBtn').addEventListener('click', () => document.getElementById('fileInput').click());
-document.getElementById('exportBtn').addEventListener('click', exportCSV);
+document.getElementById('pdfBtn').addEventListener('click', exportPDF);
 
 document.getElementById('themeBtn').addEventListener('click', () => {
   applyTheme(document.body.dataset.theme === 'dark' ? 'light' : 'dark');
 });
 
-document.getElementById('chartGroupBy').addEventListener('change', function() {
-  document.getElementById('chartYear').style.display = this.value === 'family' ? 'inline-block' : 'none';
+document.getElementById('clearFilters').addEventListener('click', () => {
+  ['year','cia','line','family','grupo','vendedor','sku'].forEach(id => {
+    document.getElementById(id).value = 'Todos';
+  });
+  document.getElementById('search').value = '';
+  detailPage = 1;
   render();
+  saveFilters();
 });
-document.getElementById('chartYear').addEventListener('change', () => render());
 
 ['year','cia','line','family','grupo','vendedor','sku','search'].forEach(id => {
   const el = document.getElementById(id);
   el.addEventListener('input', () => { detailPage = 1; render(); saveFilters(); });
   el.addEventListener('change', () => { detailPage = 1; render(); saveFilters(); });
 });
+
+/* Selector de series del gráfico */
+(function(){
+  const el = document.getElementById('trendGroup');
+  if (!el) return;
+  el.addEventListener('change', () => { updateChart(getFiltered()); saveFilters(); });
+})();
 
 /* Panel visibility dropdown */
 const viewDropdown = document.getElementById('viewDropdown');
@@ -1077,11 +1562,7 @@ document.addEventListener('click', e => {
   if (!viewDropdown.contains(e.target)) viewDropdown.classList.remove('open');
 });
 document.querySelectorAll('#viewMenu input[data-panel]').forEach(cb => {
-  cb.addEventListener('change', () => {
-    const el = document.querySelector(`.panel[data-panel="${cb.dataset.panel}"]`);
-    if (el) el.classList.toggle('hidden', !cb.checked);
-    savePanelVisibility();
-  });
+  cb.addEventListener('change', () => setPanelVisible(cb.dataset.panel, cb.checked));
 });
 
 /* Pagination */
@@ -1094,28 +1575,44 @@ document.querySelectorAll('th[data-sort]').forEach(th => {
   th.addEventListener('click', function() {
     const key = this.dataset.sort;
     const isValue = key === 'value';
+    const colIndex = this.cellIndex;
     const tbody = this.closest('table').querySelector('tbody');
     const rows = Array.from(tbody.querySelectorAll('tr'));
     const dir = this.dataset.dir === 'asc' ? -1 : 1;
     this.dataset.dir = dir === 1 ? 'asc' : 'desc';
     rows.sort((a,b) => {
-      const aV = a.querySelectorAll('td')[isValue ? 1 : 0]?.textContent.trim() || '';
-      const bV = b.querySelectorAll('td')[isValue ? 1 : 0]?.textContent.trim() || '';
-      return isValue ? dir * (num(aV) - num(bV)) : dir * aV.localeCompare(bV);
+      const aV = a.querySelectorAll('td')[colIndex]?.textContent.trim() || '';
+      const bV = b.querySelectorAll('td')[colIndex]?.textContent.trim() || '';
+      return isValue ? dir * (num(aV) - num(bV)) : dir * aV.localeCompare(bV, 'es');
     });
     rows.forEach(r => tbody.appendChild(r));
   });
 });
 
-/* Resize chart */
-window.addEventListener('resize', () => { if (chartInstance) chartInstance.resize(); });
+/* Resize chart + retry si quedó pendiente */
+let resizeTimer = null;
+window.addEventListener('resize', () => {
+  clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(() => {
+    if (chartInstance) chartInstance.resize();
+    if (pendingChartRender && allRows.length) {
+      const canvas = document.getElementById('trendChart');
+      if (canvas && canvas.getBoundingClientRect().width > 0) {
+        updateChart(getFiltered());
+      }
+    }
+  }, 120);
+});
 
 /* ============================================================
    INIT
 ============================================================ */
 (function init() {
   initTheme();
+  initPanelControls();
   initPanelVisibility();
+  restorePanelOrder();      // Antes de montar drag&drop
+  initPanelDragAndDrop();
 
   try {
     const stored = localStorage.getItem(STORAGE_PREFIX + 'data');
@@ -1125,15 +1622,13 @@ window.addEventListener('resize', () => { if (chartInstance) chartInstance.resiz
         allRows = rows;
         setStatus(`📁 ${rows.length} registros desde caché local`, 'ok');
         populateFilters();
-        populateChartYears();
         render();
         return;
       }
     }
   } catch(e){}
 
-  setStatus('📊 Carga tu Excel para comenzar', 'info');
-  populateChartYears();
+  setStatus('¡Carga tu Excel para comenzar!', 'info');
 })();
 </script>
 </body>
