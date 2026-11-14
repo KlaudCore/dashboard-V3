@@ -649,6 +649,209 @@ const num = x => {
 const fmt = n => new Intl.NumberFormat('es-MX',{maximumFractionDigits:0}).format(n||0);
 const escapeHtml = s => String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
+/* ============================================================
+   CATÁLOGO SKU → FAMILIA (fuente: "SKU y Familias ALL 2026.xlsx")
+   Se usa para asignar familia cuando el archivo cargado no la trae
+   o trae un valor inválido (#N/A, vacío, etc.).
+============================================================ */
+const SKU_CATALOG_RAW = [
+  ["100177-N","MONOMANDOS"],["10042","OTROS"],["10042-S","OTROS"],["10051","OTROS"],
+  ["10051-S","OUTLET"],["10052","MONOMANDOS"],["10052P","OTROS"],["10053","OUTLET"],
+  ["10053-S","OTROS"],["10054-S","OTROS"],["10056-S","OTROS"],["10060","MONOMANDOS LUXUS"],
+  ["10061","MONOMANDOS"],["10061-S","OTROS"],["10062","OUTLET"],["10063","OTROS"],
+  ["10064","MONOMANDOS LUXUS"],["10065-S","OTROS"],["10066-S","OUTLET"],["10070","MONOMANDOS LUXUS"],
+  ["10072-S","OUTLET"],["10074-S","REFACCIONES"],["10075","MONOMANDOS REGADERA"],["10075-C","OTROS"],
+  ["10075S","REFACCIONES"],["10075-SATIN","MONOMANDOS REGADERA"],["10076","MONOMANDOS REGADERA"],
+  ["10076-N","MONOMANDOS REGADERA"],["10076-S","REFACCIONES"],["10076-SATIN","MONOMANDOS REGADERA"],
+  ["10077","MONOMANDOS LUXUS"],["10077-1","OTROS"],["10077-3","OTROS"],["10077-N","OTROS"],
+  ["10077-R","OTROS"],["10078","MONOMANDOS LUXUS"],["10078-I","MONOMANDOS LUXUS"],["10080","MONOMANDOS LUXUS"],
+  ["10081","#N/A"],["10081-I","MONOMANDOS"],["10081-I-N","MONOMANDOS"],["10082","MONOMANDOS"],
+  ["10090","OUTLET"],["10090-S","OUTLET"],
+  ['10-1".',"PICHANCHAS"],['10-1".SR',"PICHANCHAS"],['10-1.1/2".',"PICHANCHAS"],['10-1.1/2".SR',"PICHANCHAS"],
+  ['10-1.1/4".',"PICHANCHAS"],['10-1.1/4".SR',"PICHANCHAS"],
+  ["10102","OUTLET"],["10103","OUTLET"],["10104","OUTLET"],["10105","OTROS"],["10106","OUTLET"],
+  ["10106-S","OUTLET"],["10107-S","OTROS"],["10108","OTROS"],["10109","OTROS"],["10110","MONOMANDOS"],
+  ["10111","OUTLET"],["10150","MONOMANDOS"],["10150P","OTROS"],["10180","MONOMANDOS REGADERA"],
+  ["10180-N","MONOMANDOS REGADERA"],["10180-S","MONOMANDOS REGADERA"],["10182-S","OUTLET"],
+  ["10184","OUTLET"],["10185","MONOMANDOS REGADERA"],["10186","OUTLET"],
+  ['10-2".',"PICHANCHAS"],['10-2".SR',"PICHANCHAS"],["10200","MONOMANDOS"],
+  ['10-3/4".',"PICHANCHAS"],['10-3/4".SR',"PICHANCHAS"],
+  ["10300","MONOMANDOS"],["10300-A","REFACCIONES"],["10300-C","OTROS"],["10300-N","MONOMANDOS"],
+  ["10300-S","MONOMANDOS"],["10302","OUTLET"],["10303","OUTLET"],["10304","OTROS"],["10305","OUTLET"],
+  ["10306","OUTLET"],["10307","OUTLET"],["10308","OUTLET"],["10309","OUTLET"],["10310","MONOMANDOS LUXUS"],
+  ["10310-C","REFACCIONES"],["10310-S","MONOMANDOS LUXUS"],["10311","OUTLET"],["10320","MONOMANDOS LUXUS"],
+  ["10320-S","MONOMANDOS LUXUS"],["10330","OUTLET"],["10331","OUTLET"],["10332","OUTLET"],["10333","OUTLET"],
+  ["10350","MONOMANDOS"],["10400","MONOMANDOS"],["10400-C","OTROS"],["10400-N","MONOMANDOS"],
+  ["10400-S","MONOMANDOS"],["10410","MONOMANDOS LUXUS"],["10410-S","MONOMANDOS LUXUS"],
+  ["10420","MONOMANDOS LUXUS"],["10420-S","MONOMANDOS LUXUS"],["10421","OUTLET"],["10422","OUTLET"],
+  ["10423","OUTLET"],["10430","OTROS"],["10441-S","OUTLET"],["10442-S","OUTLET"],["10450","MONOMANDOS"],
+  ["10460","OUTLET"],["10460-S","OUTLET"],["10500","MONOMANDOS"],["10503","OUTLET"],["10600-S","OUTLET"],
+  ["10610-S","OUTLET"],["108-312","REFACCIONES"],["108-347","#N/A"],
+  ['10B-1".',"PICHANCHAS"],['10B-1".SR',"PICHANCHAS"],['10B-1"-B',"PICHANCHAS"],['10B-1.1/2".',"PICHANCHAS"],
+  ['10B-1.1/2".SR',"PICHANCHAS"],['10B-1.1/4".',"PICHANCHAS"],['10B-1.1/4".SR',"PICHANCHAS"],
+  ['10B-1.1/4"-B',"PICHANCHAS"],['10B-1/2".',"OTROS"],['10B-1/4".',"PROMOCION"],
+  ['10B-2 1/2".',"PICHANCHAS"],['10B-2 1/2".SR',"PICHANCHAS"],['10B-2".',"PICHANCHAS"],
+  ['10B-2".SR',"PICHANCHAS"],['10B-3".',"PICHANCHAS"],['10B-3".SR',"PICHANCHAS"],
+  ['10B-3/4".',"PICHANCHAS"],['10B-3/4".SR',"PICHANCHAS"],['10B-3/4"-B',"PICHANCHAS"],
+  ['10B-4".',"PICHANCHAS"],['10B-4".SR',"PICHANCHAS"],
+  ['10IN-1 1/2"',"PICHANCHAS"],['10IN-1 1/4"',"PICHANCHAS"],['10IN-1"',"PICHANCHAS"],
+  ['10IN-1/2"',"PICHANCHAS"],['10IN-2 1/2"',"PICHANCHAS"],['10IN-2"',"PICHANCHAS"],
+  ['10IN-3"',"PICHANCHAS"],['10IN-3/4"',"PICHANCHAS"],['10IN-4"',"PICHANCHAS"],
+  ['10L-1 1/2"',"PICHANCHAS"],['10L-1 1/4"',"PICHANCHAS"],['10L-1"',"PICHANCHAS"],
+  ['10L-1/2"',"PICHANCHAS"],['10L-2 1/2"',"PICHANCHAS"],['10L-2"',"PICHANCHAS"],
+  ['10L-3"',"PICHANCHAS"],['10L-3/4"',"PICHANCHAS"],['10L-4"',"PICHANCHAS"],
+  ["111-25","#N/A"],["1302-S","OUTLET"],["1303-S","OUTLET"],["1304-S","OUTLET"],["1320","OUTLET"],
+  ["1330","OTROS"],["1355","OTROS"],["1357-S","OUTLET"],["1405","OUTLET"],["1406","OUTLET"],
+  ["1408","OUTLET"],["1409-S","OUTLET"],["1410-S","OUTLET"],["1411-S","OUTLET"],["1412-S","OUTLET"],
+  ["1413-S","OUTLET"],["1414-S","OUTLET"],["1450","OUTLET"],["1451-S","OUTLET"],["1452-S","OUTLET"],
+  ["1453-S","OUTLET"],["150E","VALVULAS"],["1510","OUTLET"],["151-E","VALVULAS"],["151-E-B","VALVULAS"],
+  ["151E-B","OTROS"],["153-SS","#N/A"],["1550","OUTLET"],["1551","OUTLET"],["1552-S","OUTLET"],
+  ["1553-S","OUTLET"],["1554-S","OUTLET"],["1600-S","OUTLET"],["1601-S","OUTLET"],
+  ["18000","ACCESORIOS PARA BAÑO"],["18000-D","ACCESORIOS PARA BAÑO"],["18000-N","ACCESORIOS PARA BAÑO"],
+  ["18000-S","ACCESORIOS PARA BAÑO"],
+  ["2001","CESPOLES Y CONTRAS"],["2001-DE","REFACCIONES"],["2001-I","CESPOLES Y CONTRAS"],
+  ["2001-TR","REFACCIONES"],["2007","ELEMENTOS PARA WC-BA"],['20-1/2"',"VALVULAS"],
+  ["2023","CESPOLES Y CONTRAS"],["2023-CH","CESPOLES Y CONTRAS"],["2033","CESPOLES Y CONTRAS"],
+  ["2033-CH","CESPOLES Y CONTRAS"],["2033-D","CESPOLES Y CONTRAS"],["2050","CESPOLES Y CONTRAS"],
+  ['20E-1/2"',"VALVULAS"],['20E-3/4"',"VALVULAS"],["210","COLADERAS"],
+  ['21SS-1/2"',"VALVULERIAS SS"],['21SS-3/4"',"VALVULERIAS SS"],["220","COLADERAS"],
+  ["2200NA","MEZCLADORAS"],["2200NAC","MEZCLADORAS"],["2200NAC-C","OTROS"],["2200NAC-R2","MEZCLADORAS"],
+  ["2200NA-R2","MEZCLADORAS"],["2210","MEZCLADORAS"],["2210-F","MEZCLADORAS"],["2210-N","MEZCLADORAS"],
+  ["2210-S","REFACCIONES"],["2210-SL","OTROS"],["2210-SN","OTROS"],["2220","MEZCLADORAS"],
+  ["2220-S","REFACCIONES"],["2225","MEZCLADORAS"],["2225-S","REFACCIONES"],["2225-SN","OTROS"],
+  ["2226","MEZCLADORAS"],["2227","MEZCLADORAS"],["2227-S","REFACCIONES"],["2230","MEZCLADORAS"],
+  ["2230-S","REFACCIONES"],["2240","MEZCLADORAS"],["2240-MC","MEZCLADORAS"],["2240-MP","MEZCLADORAS"],
+  ["2240-R","REFACCIONES"],["2240S","REFACCIONES"],["2240-SL","REFACCIONES"],["2241","OTROS"],
+  ["2250","MEZCLADORAS"],["2250-R","REFACCIONES"],["2250-Rociador","REFACCIONES"],
+  ["230","COLADERAS"],["240","COLADERAS"],["2400","MEZCLADORAS"],["2400-MC","MEZCLADORAS"],
+  ["2400-MP","MEZCLADORAS"],["2400-P","MEZCLADORAS"],["2400-P-COVER","OTROS"],
+  ["2420","LLAVES IND / INST"],["2425","LLAVES IND / INST"],["2425S","REFACCIONES"],
+  ["2425SA","OTROS"],["2426-S","OUTLET"],["2430","LLAVES IND / INST"],["250","COLADERAS"],
+  ["2500NA","MEZCLADORAS"],["2500NA-R2","MEZCLADORAS"],["2500NA-R2-N","MEZCLADORAS"],
+  ["2500NPA","MEZCLADORAS"],["251","COLADERAS"],["251-N","COLADERAS"],["260","COLADERAS"],
+  ["260-R","REFACCIONES"],["261","COLADERAS"],["262","COLADERAS"],["270","COLADERAS"],
+  ["2700","MEZCLADORAS"],["2700-L","OTROS"],["270-N","COLADERAS"],["2710","MEZCLADORAS"],
+  ["2710-L","OTROS"],["280","COLADERAS"],["290","COLADERAS"],["2900","ELEMENTOS PARA WC-BA"],
+  ["3040","VALVULAS"],["3040-B","VALVULAS"],["3050","VALVULAS"],["3060","VALVULAS"],
+  ["3070SS","VALVULERIAS SS"],["3090","VALVULAS"],
+  ['3100E-1 1/2"',"VALVULAS"],['3100E-1 1/4"',"VALVULAS"],['3100E-1"',"VALVULAS"],
+  ['3100E-1/2"',"VALVULAS"],['3100E-1/4"',"VALVULAS"],['3100E-2 1/2"',"VALVULAS"],
+  ['3100E-2"',"VALVULAS"],['3100E-3"',"VALVULAS"],['3100E-3/4"',"VALVULAS"],
+  ['3100E-3/8"',"VALVULAS"],['3100E-4"',"VALVULAS"],
+  ['3100ESS-1 1/2"',"VALVULERIAS SS"],['3100ESS-1 1/4"',"VALVULERIAS SS"],['3100ESS-1"',"VALVULERIAS SS"],
+  ['3100ESS-1/2"',"VALVULERIAS SS"],['3100ESS-2"',"VALVULERIAS SS"],['3100ESS-3"',"VALVULERIAS SS"],
+  ['3100ESS-3/4"',"VALVULERIAS SS"],
+  ['3200E-1 1/2"',"VALVULAS"],['3200E-1 1/4"',"VALVULAS"],['3200E-1"',"VALVULAS"],
+  ['3200E-1/2"',"VALVULAS"],['3200E-2"',"VALVULAS"],['3200E-3/4"',"VALVULAS"],
+  ['3300E-1"',"OTROS"],['3300E-3/4"',"OTROS"],['3400E-1"',"OTROS"],['3400E-1/2"',"OTROS"],
+  ["35","ELEMENTOS PARA WC-BA"],['3500-1 1/4"',"OTROS"],['3500-3/4"',"OUTLET"],
+  ['3600-1 1/2"',"VALVULAS"],['3600-1 1/4"',"VALVULAS"],['3600-2 1/2"',"VALVULAS"],
+  ['3600-2"',"VALVULAS"],['3600-3"',"VALVULAS"],['3600-3/8"',"OTROS"],['3600-4"',"VALVULAS"],
+  ['3600E-1"',"VALVULAS"],['3600E-1/2"',"VALVULAS"],['3600E-3/4"',"VALVULAS"],
+  ['3700-1 1/2"',"OUTLET"],['3700E-1"',"OTROS"],['3700E-1/2"',"OTROS"],
+  ['3800-1"',"VALVULAS"],['3800-1/2"',"VALVULAS"],['3800-3/4"',"VALVULAS"],
+  ['3850-1"',"OUTLET"],['3850-1/2"',"OTROS"],['3850-3/4"',"OUTLET"],
+  ['3900-1"',"VALVULAS"],['3900-1/2"',"VALVULAS"],['3900-3/4"',"VALVULAS"],
+  ['3910SS-1/2"',"VALVULERIAS SS"],['3910SS-3/4"',"VALVULERIAS SS"],
+  ["3950","MANGUERAS"],["3960","MANGUERAS"],["3970","MANGUERAS"],["3980","MANGUERAS"],["3993-40","OTROS"],
+  ["4060","EMPOTRAR Y MANERALES"],["4060-R","OTROS"],["4068","EMPOTRAR Y MANERALES"],
+  ["4070","EMPOTRAR Y MANERALES"],["4078","EMPOTRAR Y MANERALES"],["430","CESPOLES Y CONTRAS"],
+  ["45","ELEMENTOS PARA WC-BA"],["5012+4012","OTROS"],["5022+4022","OTROS"],['50FE-1/2"',"VALVULAS"],
+  ["6010","MEZCLADORAS"],["6010-M","MEZCLADORAS"],["6010-S","REFACCIONES"],["6012","MEZCLADORAS"],
+  ["6012-M","MEZCLADORAS"],["6012-S","REFACCIONES"],["6020","MEZCLADORAS"],["6030","MEZCLADORAS"],
+  ["610E","VALVULAS"],["650E","VALVULAS"],["690-C","VALVULAS"],["690-Q","OTROS"],
+  ["7001","REGADERAS"],["7002-AS","REGADERAS"],["7007","REGADERAS"],['7007-6"',"REGADERAS"],
+  ['7007-6"-N',"REGADERAS"],["7007-N","REGADERAS"],["7008-AS","REGADERAS"],["700AS","REGADERAS"],
+  ["700LLE","REGADERAS"],["700NE","REGADERAS"],["700PAS","REGADERAS"],["7010","REGADERAS"],
+  ["7010-N","REGADERAS"],["7012","REGADERAS"],["7018","REGADERAS"],["7021","REGADERAS"],
+  ["7022","REGADERAS"],["7027","REGADERAS"],["7028","REGADERAS"],["7030","REGADERAS"],
+  ["7030-N","#N/A"],["7050","OTROS"],["7051","OTROS"],["7501","REGADERAS"],
+  ["8007","ACCESORIOS PARA BAÑO"],["8007-D","ACCESORIOS PARA BAÑO"],["8010","ACCESORIOS PARA BAÑO"],
+  ["8010-N","ACCESORIOS PARA BAÑO"],["8022","ACCESORIOS PARA BAÑO"],["8022-C1","ACCESORIOS PARA BAÑO"],
+  ["8022-C2","ACCESORIOS PARA BAÑO"],["8022-C3","ACCESORIOS PARA BAÑO"],["8022-C4","ACCESORIOS PARA BAÑO"],
+  ["8022-S","ACCESORIOS PARA BAÑO"],["8022-S1","ACCESORIOS PARA BAÑO"],["8022-S2","ACCESORIOS PARA BAÑO"],
+  ["8022-S3","ACCESORIOS PARA BAÑO"],["8022-S3 AJUSTE","OTROS"],["8022-S4","ACCESORIOS PARA BAÑO"],
+  ["8022-S5","OTROS"],["8022-S6","OTROS"],["820-Q-SS","VALVULERIAS SS"],
+  ["820R-Q","EMPOTRAR Y MANERALES"],["820R-Q-R2","EMPOTRAR Y MANERALES"],["820R-Q-R2-SS","VALVULERIAS SS"],
+  ["820R-R2-S/M.","EMPOTRAR Y MANERALES"],["820R-R2-S/M-SS","VALVULERIAS SS"],
+  ["820-R-S/M.","EMPOTRAR Y MANERALES"],["820-R-S/M-SS","VALVULERIAS SS"],
+  ["830S-Q","EMPOTRAR Y MANERALES"],["830S-Q-R2","EMPOTRAR Y MANERALES"],
+  ["830S-R2-S/M","EMPOTRAR Y MANERALES"],["830-S-S/M","EMPOTRAR Y MANERALES"],
+  ["840-SA","LLAVES IND / INST"],["840SA-R2","LLAVES IND / INST"],
+  ["9000","CESPOLES Y CONTRAS"],["9060","CESPOLES Y CONTRAS"],["9070","CESPOLES Y CONTRAS"],
+  ["9070-N","OTROS"],["9080","CESPOLES Y CONTRAS"],["9080-N","CESPOLES Y CONTRAS"],
+  ["9080-S","CESPOLES Y CONTRAS"],
+  ["ACTIVO","#N/A"],["AHW-F4410","#N/A"],["AUTO","#N/A"],
+  ["CAPACIDAD: 5 PASAJEROS","#N/A"],["MOTOR: A25-AA365031","#N/A"],
+  ["NUMERO DE SERIE: 4T1J11AK5LU862484","#N/A"],["CLAVE VEHICULAR: 0520115","#N/A"],
+  ["Este Activo Forma Parte de Alan de Aguascalientes, SA de CV.","#N/A"],
+  ["El Cual Fue Adquirido a Fecha 30 de noviembre del 2019, de la factura original AAGN2870","#N/A"],
+  ["BATERIA","PROMOCION"],["BOLSA","PROMOCION"],["BOLSAB","PROMOCION"],["BOLSAG","PROMOCION"],
+  ["BOLSA-L","PROMOCION"],["BOLSA-N","PROMOCION"],["CAT-08","PROMOCION"],["CAT-09","PROMOCION"],
+  ["CAT-2010","PROMOCION"],["CAT-2013","PROMOCION"],["CAT-2015","PROMOCION"],["CAT-2016","PROMOCION"],
+  ["CAT-CALI","PROMOCION"],["CILINDRO","PROMOCION"],["CILINDRO-L","PROMOCION"],["CINTO","PROMOCION"],
+  ["COMPPAG","#N/A"],["CZ-120A2","#N/A"],["FLETE1","OTROS"],["FLETE2","OTROS"],
+  ["FOLLETO","PROMOCION"],["GARANTIA-SOL","PROMOCION"],["GORRA","PROMOCION"],["GORRA L","PROMOCION"],
+  ["LIBRETA-A","PROMOCION"],["LIBRETA-L","PROMOCION"],["LISTAS","PROMOCION"],["LLAVERO","PROMOCION"],
+  ["LLAVERO IMP","PROMOCION"],["MAA-AW035","#N/A"],["MAN-MON","MANGUERAS"],["MANUAL-SOL","PROMOCION"],
+  ["MMA-AW035","#N/A"],["MOCHILA","PROMOCION"],["NCBON","#N/A"],["NCD","SERVICIOS"],
+  ["NCDESC","#N/A"],["NCFALT","#N/A"],["NCFLET","#N/A"],["NCREFACT","#N/A"],
+  ["NO.1","REFACCIONES"],["NO.2","REFACCIONES"],["NO.3","REFACCIONES"],["NO.4","REFACCIONES"],
+  ["No.5","REFACCIONES"],["No.6","REFACCIONES"],["No.7","REFACCIONES"],
+  ["PLAYERA","PROMOCION"],["PLUMA","PROMOCION"],["PLUMA-EL","PROMOCION"],["PLUMAR","PROMOCION"],
+  ["PORTA-LAP","PROMOCION"],["POSTER","PROMOCION"],["POSTER-SOL","PROMOCION"],
+  ["R-10076-N","#N/A"],["R-10200","REFACCIONES"],["R-10300","REFACCIONES"],["R-106","REFACCIONES"],
+  ["R-15","OTROS"],["R-16","OTROS"],["R-18","OTROS"],["R-19","REFACCIONES"],["R-1N","REFACCIONES"],
+  ["R-2.","REFACCIONES"],["R-2000","REFACCIONES"],["R-2010","#N/A"],["R-21","REFACCIONES"],
+  ["R-2200","REFACCIONES"],["R-2210","REFACCIONES"],["R-24","REFACCIONES"],["R-24-1","REFACCIONES"],
+  ["R-2A","REFACCIONES"],["R-2B","REFACCIONES"],["R-2CA","REFACCIONES"],["R-2C-C","REFACCIONES"],
+  ["R-2C-F","REFACCIONES"],["R-2E","OTROS"],["R-3","REFACCIONES"],["R-300-C","REFACCIONES"],
+  ["R-300-F","REFACCIONES"],["R-33","REFACCIONES"],["R-34","OTROS"],["R-35-15\"-CC-N","OTROS"],
+  ["R-39-15\"","BRAZOS REGADERA"],["R-39-15\"-CC","BRAZOS REGADERA"],["R-39-15\"-CN","BRAZOS REGADERA"],
+  ["R-39-15\"-N","BRAZOS REGADERA"],["R-39-15\"-SC","BRAZOS REGADERA"],["R-39-15\"-SR","BRAZOS REGADERA"],
+  ["R-39-15-SC","OTROS"],["R-39-16\"","REFACCIONES"],["R-39-20\"","BRAZOS REGADERA"],
+  ["R-39-20\"-CC","BRAZOS REGADERA"],["R-39-20\"-N","BRAZOS REGADERA"],["R-39-20\"-SC","BRAZOS REGADERA"],
+  ["R-39-20\"-SR","BRAZOS REGADERA"],["R-39-P","REFACCIONES"],["R-3C-SS","REFACCIONES"],
+  ["R-3-SS","REFACCIONES"],["R-3Sujetador","REFACCIONES"],["R-400","REFACCIONES"],["R-42","REFACCIONES"],
+  ["R-46","OTROS"],["R-60","REFACCIONES"],["R-64-Q","EMPOTRAR Y MANERALES"],["R-64-QN","EMPOTRAR Y MANERALES"],
+  ["R-7000","REFACCIONES"],["R-72","OTROS"],["R-73","OTROS"],["R-74","OTROS"],["R-74-CH","OTROS"],
+  ["R-80","OTROS"],["R-81","OTROS"],["R-83","OTROS"],["R-91-CH.","REFACCIONES"],["R-91-GR.","REFACCIONES"],
+  ["R-95","REFACCIONES"],["R-96","REFACCIONES"],["R-97","REFACCIONES"],["R-98","REFACCIONES"],
+  ["R-99","REFACCIONES"],["R-A4","REFACCIONES"],["R-A6","REFACCIONES"],["R-ANTIPOL-SOL","REFACCIONES"],
+  ["R-BASE-SOL","REFACCIONES"],["R-CAJA INDIVIDUA","PROMOCION"],["R-check","REFACCIONES"],
+  ["R-Contra","OTROS"],["R-CT","REFACCIONES"],["RELOJ-C","PROMOCION"],["RELOJ-D","PROMOCION"],
+  ["R-M-Extensión","REFACCIONES"],["R-PANEL 7501","REFACCIONES"],["R-Sujetador","REFACCIONES"],
+  ["R-TORN-SOL","REFACCIONES"],["R-TUBO-SOL","REFACCIONES"],["SERADMIN","SERVICIOS"],["SINIESTRO","OTROS"],
+  ["SOBRES","PROMOCION"],["TAPETE","PROMOCION"],["TERMO-L","PROMOCION"],["TRIPTICO","PROMOCION"],
+  ["TRIPTICO-NOM","PROMOCION"],["USB-L","PROMOCION"]
+];
+
+/* Mapa normalizado para lookup rápido */
+const SKU_CATALOG = {};
+for (const [sku, fam] of SKU_CATALOG_RAW) {
+  if (!sku) continue;
+  SKU_CATALOG[norm(sku)] = String(fam || '').trim();
+}
+
+function isValidFamilyName(f) {
+  const n = norm(f);
+  return !!n && n !== 'sin familia' && n !== '#n/a' && n !== 'n/a' && n !== 'na'
+      && n !== '#ref!' && n !== 'nan' && n !== 'null' && n !== 'undefined';
+}
+
+/* Resuelve familia: prioriza catálogo si tiene valor válido, si no, usa Excel. */
+function resolveFamily(sku, excelFamily) {
+  const catFam = SKU_CATALOG[norm(sku)];
+  if (catFam && isValidFamilyName(catFam)) return { family: catFam.toUpperCase().trim(), source: 'catalog' };
+  if (isValidFamilyName(excelFamily))       return { family: String(excelFamily).toUpperCase().trim(), source: 'excel' };
+  return { family: 'SIN FAMILIA', source: 'default' };
+}
+
+/* ============================================================
+   EXTRACCIÓN
+============================================================ */
+let catalogFills = 0; // contador de familias asignadas desde catálogo
+
 function col(obj, candidates) {
   const keys = Object.keys(obj);
   for (const c of candidates) {
@@ -726,6 +929,8 @@ function extractRows(rawRows) {
   const vendorIdC = ['no.','no','numero','número','num vendedor','vendor id'];
   const mfrC  = ['clave fabricante','clave_fabricante','fabricante','manufacturer','mfr'];
 
+  catalogFills = 0;
+
   if (monthCols.length > 0) {
     const skuKey = keys.find(k => skuC.some(c => norm(k)===norm(c))) || keys[0];
     const descKey = keys.find(k => descC.some(c => norm(k)===norm(c)));
@@ -743,7 +948,7 @@ function extractRows(rawRows) {
       if (!sku) continue;
       const desc  = descKey ? String(row[descKey] ?? '').trim() : '';
       const line  = lineKey ? String(row[lineKey] ?? '').trim() : 'SIN PROVEEDOR';
-      const family= famKey  ? String(row[famKey]  ?? '').trim() : 'SIN FAMILIA';
+      const rawFamily = famKey  ? String(row[famKey]  ?? '').trim() : '';
       const cia   = ciaKey  ? String(row[ciaKey]  ?? '').trim() : '';
       const grupo = grpKey  ? String(row[grpKey]  ?? '').trim() : '';
       const vendedor = venKey ? String(row[venKey] ?? '').trim() : '';
@@ -751,6 +956,9 @@ function extractRows(rawRows) {
       
       let fabricante = mfrKey ? String(row[mfrKey] ?? '').trim() : '';
       if (/^\d{4}-\d{2}-\d{2}/.test(fabricante)) fabricante = '';
+
+      const { family, source } = resolveFamily(sku, rawFamily);
+      if (source === 'catalog') catalogFills++;
 
       for (const mc of monthCols) {
         const value = num(row[mc]);
@@ -818,7 +1026,7 @@ function extractRows(rawRows) {
     const sku   = String(col(row, skuC)).trim();
     const desc  = String(col(row, descC)).trim();
     const line  = String(col(row, lineC)).trim() || 'SIN PROVEEDOR';
-    const family= String(col(row, famC)).trim()  || 'SIN FAMILIA';
+    const rawFamily = String(col(row, famC)).trim();
     const cia   = String(col(row, ciaC)).trim();
     const folio = String(col(row, folC)).trim();
     const grupo = String(col(row, grpC)).trim();
@@ -832,6 +1040,9 @@ function extractRows(rawRows) {
 
     if (!sku) continue;
     if (value === 0) continue;
+
+    const { family, source } = resolveFamily(sku, rawFamily);
+    if (source === 'catalog') catalogFills++;
 
     out.push({ year: ym.year, month: ym.month, sku, desc, line, family, cia, grupo, vendedor, vendorId, fabricante, folio, value });
   }
@@ -943,8 +1154,9 @@ async function loadFile(file) {
     populateFilters();
     render();
 
+    const famInfo = catalogFills > 0 ? ` · ${catalogFills} familias asignadas desde catálogo` : '';
     setProgress(100, `✅ ${rows.length} registros cargados`);
-    setStatus(`✅ ${rows.length} registros cargados`, 'ok');
+    setStatus(`✅ ${rows.length} registros cargados${famInfo}`, 'ok');
     stopAutoProgress();
     hideProgress(750);
 
