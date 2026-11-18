@@ -12,7 +12,7 @@
     --bg:#f4f6fb; --bg-2:#eef2f9; --surface:#ffffff; --surface-2:#f8fafc;
     --border:#e6ebf2; --border-2:#eef2f7;
     --text:#0f172a; --text-2:#475569; --text-3:#94a3b8;
-    --accent:#bb0615; --accent-2:#ed3a3a; --accent-soft:#eef2ff;
+    --accent:#bb0615; --accent-2:#ed3a3a; --accent-soft:#fdecec;
     --success:#059669; --success-soft:#d1fae5;
     --danger:#dc2626; --danger-soft:#fee2e2;
     --warning:#d97706; --warning-soft:#fef3c7;
@@ -27,7 +27,7 @@
     --bg:#0a0f1c; --bg-2:#0d1424; --surface:#111a2e; --surface-2:#16203a;
     --border:#1e2a44; --border-2:#22304e;
     --text:#e6ecf7; --text-2:#94a3b8; --text-3:#64748b;
-    --accent:#818cf8; --accent-2:#a78bfa; --accent-soft:#1e1b4b;
+    --accent:#f05a5a; --accent-2:#ff8a80; --accent-soft:#3a0d12;
     --success:#34d399; --success-soft:#064e3b;
     --danger:#f87171; --danger-soft:#7f1d1d;
     --warning:#fbbf24; --warning-soft:#78350f;
@@ -41,8 +41,8 @@
   html,body{height:100%}
   body{
     background:
-      radial-gradient(1200px 600px at 10% -10%, rgba(79,70,229,.08), transparent 60%),
-      radial-gradient(900px 500px at 90% 0%, rgba(124,58,237,.07), transparent 55%),
+      radial-gradient(1200px 600px at 10% -10%, rgba(187,6,21,.08), transparent 60%),
+      radial-gradient(900px 500px at 90% 0%, rgba(237,58,58,.05), transparent 55%),
       var(--bg);
     color:var(--text);
     font-family:'Inter','Segoe UI',system-ui,-apple-system,Arial,sans-serif;
@@ -73,10 +73,10 @@
     border:0;border-radius:12px;padding:10px 16px;font-weight:700;font-size:13px;
     cursor:pointer;background:linear-gradient(135deg,var(--accent),var(--accent-2));
     color:#fff;transition:transform .15s ease, box-shadow .15s ease, opacity .15s ease;
-    box-shadow:0 8px 20px -10px rgba(79,70,229,.6);
+    box-shadow:0 8px 20px -10px rgba(187,6,21,.6);
     display:inline-flex;align-items:center;gap:8px;font-family:inherit;
   }
-  .btn:hover{transform:translateY(-1px);box-shadow:0 12px 24px -10px rgba(79,70,229,.7)}
+  .btn:hover{transform:translateY(-1px);box-shadow:0 12px 24px -10px rgba(187,6,21,.7)}
   .btn:active{transform:translateY(0)}
   .btn:disabled{opacity:.6;cursor:not-allowed;transform:none}
   .btn-ghost{
@@ -129,7 +129,7 @@
     position:relative;overflow:hidden;
   }
   .upload-zone::before{
-    content:"";position:absolute;inset:0;background:radial-gradient(600px 120px at 50% 0, rgba(79,70,229,.08), transparent 70%);
+    content:"";position:absolute;inset:0;background:radial-gradient(600px 120px at 50% 0, rgba(187,6,21,.08), transparent 70%);
     opacity:0;transition:opacity .25s ease;pointer-events:none;
   }
   .upload-zone:hover::before{opacity:1}
@@ -216,7 +216,7 @@
     width:34px;height:34px;border-radius:10px;display:grid;place-items:center;
     background:linear-gradient(135deg,var(--k1,#4f46e5),var(--k2,#7c3aed));
     color:#fff;font-size:16px;margin-bottom:10px;
-    box-shadow:0 6px 14px -6px rgba(79,70,229,.6);
+    box-shadow:0 6px 14px -6px rgba(187,6,21,.6);
   }
   .kpi .label{font-size:11px;color:var(--text-3);font-weight:700;text-transform:uppercase;letter-spacing:.5px}
   .kpi .value{font-size:22px;font-weight:800;margin:4px 0 3px;line-height:1.15;letter-spacing:-.02em;word-break:break-word}
@@ -332,9 +332,12 @@
   th{
     position:sticky;top:0;background:var(--surface);z-index:2;
     font-size:10.5px;text-transform:uppercase;color:var(--text-3);font-weight:800;
-    letter-spacing:.5px;cursor:pointer;user-select:none;
+    letter-spacing:.5px;
   }
-  th:hover{color:var(--accent)}
+  th[data-sort]{cursor:pointer;user-select:none}
+  th[data-sort]:hover{color:var(--accent)}
+  th[data-dir="asc"]::after{content:" ▲"}
+  th[data-dir="desc"]::after{content:" ▼"}
   tbody tr{transition:background .12s ease}
   tbody tr:hover{background:var(--surface-2)}
   .text-right{text-align:right}
@@ -459,7 +462,7 @@
           <label><input type="checkbox" data-panel="skus" checked> Top SKU</label>
           <label><input type="checkbox" data-panel="groups" checked> Top grupos</label>
           <label><input type="checkbox" data-panel="sellers" checked> Top vendedores</label>
-          <label><input type="checkbox" data-panel="companies" checked> Top Cías</label>
+          <label><input type="checkbox" data-panel="companies" checked> Top Tiendas</label>
           <label><input type="checkbox" data-panel="manufacturers" checked> Top fabricantes</label>
           <label><input type="checkbox" data-panel="detail" checked> Detalle de registros</label>
         </div>
@@ -558,7 +561,7 @@
         <table>
           <thead>
             <tr>
-              <th data-sort="name">Grupo</th>
+              <th data-sort="name" title="Primera palabra de la familia">Categoría</th>
               <th data-sort="name">Familia</th>
               <th data-sort="value" class="text-right">Sell‑out</th>
             </tr>
@@ -639,6 +642,12 @@
 const MONTHS = ['ENE','FEB','MAR','ABR','MAY','JUN','JUL','AGO','SEP','OCT','NOV','DIC'];
 const STORAGE_PREFIX = 'dash_v2_';
 const TOP_N = 10;
+/* Prefijo de unidad para la matriz. Déjalo '' si los valores son piezas;
+   cámbialo a '$' si la columna de valor es un importe. */
+const UNIT_PREFIX = '';
+/* true  = el catálogo SKU→Familia manda sobre la familia del Excel.
+   false = se usa la familia del Excel y el catálogo solo rellena vacíos/#N/A. */
+const CATALOG_OVERRIDES_EXCEL = true;
 
 const norm = s => String(s ?? '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim();
 const num = x => {
@@ -651,8 +660,8 @@ const escapeHtml = s => String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&
 
 /* ============================================================
    CATÁLOGO SKU → FAMILIA (fuente: "SKU y Familias ALL 2026.xlsx")
-   Se usa para asignar familia cuando el archivo cargado no la trae
-   o trae un valor inválido (#N/A, vacío, etc.).
+   Ver CATALOG_OVERRIDES_EXCEL para decidir si sobrescribe la familia
+   del Excel o solo rellena valores vacíos/inválidos (#N/A, etc.).
 ============================================================ */
 const SKU_CATALOG_RAW = [
   ["100177-N","MONOMANDOS"],["10042","OTROS"],["10042-S","OTROS"],["10051","OTROS"],
@@ -839,50 +848,81 @@ function isValidFamilyName(f) {
       && n !== '#ref!' && n !== 'nan' && n !== 'null' && n !== 'undefined';
 }
 
-/* Resuelve familia: prioriza catálogo si tiene valor válido, si no, usa Excel. */
+/* Resuelve familia según CATALOG_OVERRIDES_EXCEL. */
 function resolveFamily(sku, excelFamily) {
   const catFam = SKU_CATALOG[norm(sku)];
-  if (catFam && isValidFamilyName(catFam)) return { family: catFam.toUpperCase().trim(), source: 'catalog' };
-  if (isValidFamilyName(excelFamily))       return { family: String(excelFamily).toUpperCase().trim(), source: 'excel' };
+  const catOk = !!catFam && isValidFamilyName(catFam);
+  const xlsOk = isValidFamilyName(excelFamily);
+  if (catOk && (CATALOG_OVERRIDES_EXCEL || !xlsOk)) return { family: catFam.toUpperCase().trim(), source: 'catalog' };
+  if (xlsOk) return { family: String(excelFamily).toUpperCase().trim(), source: 'excel' };
   return { family: 'SIN FAMILIA', source: 'default' };
 }
 
 /* ============================================================
    EXTRACCIÓN
 ============================================================ */
-let catalogFills = 0; // contador de familias asignadas desde catálogo
+let catalogFills = 0;   // registros con familia asignada desde catálogo
+let skippedNoMonth = 0; // filas omitidas por no tener mes reconocible
 
-function col(obj, candidates) {
+/* Busca una columna por nombre. Primero coincidencia exacta; luego aproximada
+   (solo candidatos de 4+ letras, para evitar que "no" coincida con "Año").
+   opts.fuzzy=false desactiva la aproximada; opts.exclude descarta columnas
+   cuyo nombre contenga alguno de esos textos. */
+function col(obj, candidates, opts = {}) {
   const keys = Object.keys(obj);
+  const exclude = (opts.exclude || []).map(norm);
+  const allowed = k => !exclude.some(x => norm(k).includes(x));
   for (const c of candidates) {
     const found = keys.find(k => norm(k) === norm(c));
     if (found) return obj[found];
   }
+  if (opts.fuzzy === false) return '';
   for (const c of candidates) {
     const cn = norm(c);
-    const found = keys.find(k => norm(k).includes(cn));
+    if (cn.length < 4) continue;
+    const found = keys.find(k => allowed(k) && norm(k).includes(cn));
     if (found) return obj[found];
   }
   return '';
 }
+/* Devuelve 1-12, o 0 si no se reconoce el mes (antes devolvía 1 = enero). */
 function monthNum(m) {
-  if (typeof m === 'number') return m;
+  if (typeof m === 'number') return (m >= 1 && m <= 12) ? Math.trunc(m) : 0;
   const s = norm(m);
+  if (!s) return 0;
   const idx = MONTHS.findIndex(mo => norm(mo) === s || s.startsWith(norm(mo)));
-  return idx >= 0 ? idx + 1 : (num(m) || 1);
+  if (idx >= 0) return idx + 1;
+  const n = num(m);
+  return (n >= 1 && n <= 12) ? Math.trunc(n) : 0;
 }
 function toYM(v) {
-  if (v instanceof Date && !isNaN(v)) return { year: v.getFullYear(), month: v.getMonth()+1 };
+  const ok = (y, m) => (y >= 1990 && y <= 2100 && m >= 1 && m <= 12) ? { year: y, month: m } : null;
+  if (v instanceof Date && !isNaN(v)) return ok(v.getFullYear(), v.getMonth()+1);
   if (typeof v === 'number' && v > 25000 && v < 80000) {
-    try { const d = XLSX.SSF.parse_date_code(v); return { year:d.y, month:d.m }; } catch(e){}
+    try { const d = XLSX.SSF.parse_date_code(v); return ok(d.y, d.m); } catch(e){}
   }
   const str = String(v ?? '').trim();
-  if (str) {
-    const m = str.match(/(\d{4})[-\/](\d{1,2})/);
-    if (m) return { year: +m[1], month: +m[2] };
-    const d = new Date(str);
-    if (!isNaN(d)) return { year: d.getFullYear(), month: d.getMonth()+1 };
+  if (!str) return null;
+  // aaaa-mm(-dd) o aaaa/mm(/dd)
+  let m = str.match(/^(\d{4})[-\/.](\d{1,2})(?:[-\/.]\d{1,2})?\b/);
+  if (m) return ok(+m[1], +m[2]);
+  // dd/mm/aaaa o dd/mm/aa (formato México)
+  m = str.match(/^(\d{1,2})[-\/.](\d{1,2})[-\/.](\d{2}|\d{4})\b/);
+  if (m) {
+    let y = +m[3]; if (y < 100) y += 2000;
+    return ok(y, +m[2]);
   }
+  // mm/aaaa
+  m = str.match(/^(\d{1,2})[-\/.](\d{4})$/);
+  if (m) return ok(+m[2], +m[1]);
+  // "ENE-24", "Enero 2024", etc.
+  m = norm(str).match(/^([a-z]{3,})[\s\-\/.]*(\d{2}|\d{4})$/);
+  if (m) {
+    const i = MONTHS.findIndex(mo => m[1].startsWith(norm(mo)));
+    let y = +m[2]; if (y < 100) y += 2000;
+    if (i >= 0) return ok(y, i + 1);
+  }
+  // Ya no se usa new Date(str): interpreta mm/dd (EE. UU.) y aplica UTC.
   return null;
 }
 
@@ -915,21 +955,22 @@ function extractRows(rawRows) {
   if (!rawRows.length) return [];
   const keys = Object.keys(rawRows[0]);
 
-  const monthPatterns = [/^\d{2}-\d{2}$/, /^[A-Za-z]{3}-\d{2}$/, /^\d{2}[A-Za-z]{3}$/];
+  const monthPatterns = [/^\d{2}-\d{2}$/, /^[A-Za-z]{3}-\d{2}$/, /^\d{2}[A-Za-z]{3}$/, /^\d{2}(0[1-9]|1[0-2])$/];
   const monthCols = keys.filter(k => monthPatterns.some(p => p.test(String(k).trim())));
 
   const skuC  = ['clave_articulo','clave articulo','clavearticulo','sku','clave','codigo','código','item','material','parte','articulo'];
   const descC = ['descripcion articulo','descripcion_articulo','descripcionarticulo','descripcion','descripción','producto','nombre'];
-  const lineC = ['proveedor','línea','linea','line','categoria','categoría','clase'];
+  const lineC = ['proveedor','línea','linea','line','clase'];
   const famC  = ['familia','family'];
   const ciaC  = ['cia','compañia','compañía','compania','empresa','company','sucursal','tienda'];
   const folC  = ['folio','factura','ticket'];
   const grpC  = ['grupo','group','categoria','categoría'];
   const venC  = ['vendedor','vendor','agente','salesperson'];
-  const vendorIdC = ['no.','no','numero','número','num vendedor','vendor id'];
+  const vendorIdC = ['no.','no','numero','número','no. vendedor','num vendedor','numero vendedor','número vendedor','id vendedor','vendor id'];
   const mfrC  = ['clave fabricante','clave_fabricante','fabricante','manufacturer','mfr'];
 
   catalogFills = 0;
+  skippedNoMonth = 0;
 
   if (monthCols.length > 0) {
     const skuKey = keys.find(k => skuC.some(c => norm(k)===norm(c))) || keys[0];
@@ -958,7 +999,6 @@ function extractRows(rawRows) {
       if (/^\d{4}-\d{2}-\d{2}/.test(fabricante)) fabricante = '';
 
       const { family, source } = resolveFamily(sku, rawFamily);
-      if (source === 'catalog') catalogFills++;
 
       for (const mc of monthCols) {
         const value = num(row[mc]);
@@ -979,7 +1019,7 @@ function extractRows(rawRows) {
           }
         }
         // YYMM compacto → ej. "2401"
-        else if (/^\d{4}$/.test(clean)) {
+        else if (/^\d{2}(0[1-9]|1[0-2])$/.test(clean)) {
           year = 2000 + +clean.slice(0, 2);
           month = +clean.slice(2);
         }
@@ -1002,6 +1042,7 @@ function extractRows(rawRows) {
 
         if (month < 1 || month > 12) continue;
 
+        if (source === 'catalog') catalogFills++;
         out.push({ year, month, sku, desc, line, family, cia, grupo,
                    vendedor, vendorId, fabricante, folio:'', value });
       }
@@ -1017,13 +1058,14 @@ function extractRows(rawRows) {
   for (const row of rawRows) {
     let ym = toYM(col(row, dateC));
     if (!ym) {
-      const y = num(col(row, yearC));
+      const y = num(col(row, yearC, { fuzzy:false }));
       const m = monthNum(col(row, monthC));
-      if (y >= 2000) ym = { year:y, month:m||1 };
+      if (y >= 2000 && m) ym = { year:y, month:m };
+      else if (y >= 2000) { skippedNoMonth++; continue; }
     }
     if (!ym) continue;
 
-    const sku   = String(col(row, skuC)).trim();
+    const sku   = String(col(row, skuC, { exclude:['fabricante','descripcion','proveedor'] })).trim();
     const desc  = String(col(row, descC)).trim();
     const line  = String(col(row, lineC)).trim() || 'SIN PROVEEDOR';
     const rawFamily = String(col(row, famC)).trim();
@@ -1031,7 +1073,7 @@ function extractRows(rawRows) {
     const folio = String(col(row, folC)).trim();
     const grupo = String(col(row, grpC)).trim();
     const vendedor = String(col(row, venC)).trim();
-    const vendorId = String(col(row, vendorIdC)).trim();
+    const vendorId = String(col(row, vendorIdC, { fuzzy:false })).trim();
     
     let fabricante = String(col(row, mfrC)).trim();
     if (/^\d{4}-\d{2}-\d{2}/.test(fabricante)) fabricante = '';
@@ -1064,12 +1106,17 @@ let _retryScheduled = false;
 ============================================================ */
 function applyTheme(theme) {
   document.body.dataset.theme = theme;
+  try { localStorage.setItem(STORAGE_PREFIX + 'theme', theme); } catch(e){}
   document.getElementById('themeBtn').textContent = theme === 'dark' ? '☀️ Modo claro' : '🌙 Modo oscuro';
   if (allRows.length) render();
   if (chartInstance) setTimeout(() => chartInstance.resize(), 60);
   if (pieInstance)   setTimeout(() => pieInstance.resize(), 60);
 }
-function initTheme() { applyTheme('light'); }
+function initTheme() {
+  let t = 'light';
+  try { t = localStorage.getItem(STORAGE_PREFIX + 'theme') || 'light'; } catch(e){}
+  applyTheme(t === 'dark' ? 'dark' : 'light');
+}
 
 /* ============================================================
    BARRA DE PROGRESO
@@ -1128,20 +1175,25 @@ async function loadFile(file) {
     setProgress(32, 'Procesando Excel…');
     await nextFrame();
 
-    const wb = XLSX.read(new Uint8Array(buf), { type:'array', cellDates:true });
+    // cellDates:false evita el corrimiento de zona horaria de SheetJS; las fechas
+    // llegan como número de serie y toYM las convierte con XLSX.SSF.
+    const wb = XLSX.read(new Uint8Array(buf), { type:'array', cellDates:false });
     const sheetName = wb.SheetNames[0];
     const sheet = sheetName ? wb.Sheets[sheetName] : null;
     if (!sheet) throw new Error('El archivo no contiene hojas.');
 
     const rawTyped = XLSX.utils.sheet_to_json(sheet, { defval:'' });
-    const rawStr   = XLSX.utils.sheet_to_json(sheet, { defval:'', raw:false });
     if (!rawTyped.length) throw new Error('El archivo está vacío.');
 
     setProgress(58, 'Extrayendo registros…');
     await nextFrame();
 
     let rows = extractRows(rawTyped);
-    if (!rows.length) rows = extractRows(rawStr);
+    if (!rows.length) {
+      // Respaldo: valores como texto, con fechas en ISO para evitar ambigüedad dd/mm vs mm/dd
+      const rawStr = XLSX.utils.sheet_to_json(sheet, { defval:'', raw:false, dateNF:'yyyy-mm-dd' });
+      rows = extractRows(rawStr);
+    }
     if (!rows.length) throw new Error('No se pudieron extraer datos. Revisa las columnas.');
 
     setProgress(84, 'Construyendo dashboard…');
@@ -1149,14 +1201,19 @@ async function loadFile(file) {
 
     allRows = rows;
     detailPage = 1;
-    try { localStorage.setItem(STORAGE_PREFIX + 'data', JSON.stringify(rows)); } catch(e){}
+    try { localStorage.setItem(STORAGE_PREFIX + 'data', JSON.stringify(rows)); }
+    catch(e){
+      // Si no cabe, se borra la caché para no mostrar datos de un archivo anterior al recargar
+      try { localStorage.removeItem(STORAGE_PREFIX + 'data'); } catch(_){}
+    }
 
     populateFilters();
     render();
 
-    const famInfo = catalogFills > 0 ? ` · ${catalogFills} familias asignadas desde catálogo` : '';
+    const famInfo  = catalogFills > 0 ? ` · ${fmt(catalogFills)} con familia del catálogo` : '';
+    const skipInfo = skippedNoMonth > 0 ? ` · ${fmt(skippedNoMonth)} filas sin mes omitidas` : '';
     setProgress(100, `✅ ${rows.length} registros cargados`);
-    setStatus(`✅ ${rows.length} registros cargados${famInfo}`, 'ok');
+    setStatus(`✅ ${fmt(rows.length)} registros cargados${famInfo}${skipInfo}`, 'ok');
     stopAutoProgress();
     hideProgress(750);
 
@@ -1248,9 +1305,14 @@ function render() {
     const sL = data.filter(r => Number(r.year) === currentYear).reduce((s,r)=>s+r.value,0);
     const sP = data.filter(r => Number(r.year) === prevYear && Number(r.month) <= maxMonthCurrent).reduce((s,r)=>s+r.value,0);
     
-    const g = sP ? ((sL/sP - 1) * 100) : 0;
-    growthEl.textContent = (g>=0?'+':'') + g.toFixed(1) + '%';
-    growthEl.style.color = g >= 0 ? 'var(--success)' : 'var(--danger)';
+    if (sP) {
+      const g = (sL/sP - 1) * 100;
+      growthEl.textContent = (g>=0?'+':'') + g.toFixed(1) + '%';
+      growthEl.style.color = g >= 0 ? 'var(--success)' : 'var(--danger)';
+    } else {
+      growthEl.textContent = '—';
+      growthEl.style.color = '';
+    }
   } else {
     growthEl.textContent = '—';
     growthEl.style.color = '';
@@ -1264,7 +1326,9 @@ function render() {
   const topFam = [...famMap.entries()].sort((a,b)=>b[1]-a[1])[0];
   document.getElementById('topfam').textContent = topFam ? topFam[0] : '—';
 
-  const monthsCount = new Set(data.map(r=>`${r.year}-${r.month}`)).size || 1;
+  // Meses calendario entre el primero y el último con datos (incluye meses en cero)
+  const ymIdx = data.map(r => Number(r.year) * 12 + Number(r.month) - 1).filter(n => !isNaN(n));
+  const monthsCount = ymIdx.length ? (Math.max(...ymIdx) - Math.min(...ymIdx) + 1) : 1;
   document.getElementById('avgmonth').textContent = fmt(total / monthsCount);
 
   const ymMap = new Map();
@@ -1314,6 +1378,7 @@ function render() {
       }).join('')
     : '<tr><td colspan="3" class="muted" style="text-align:center;padding:18px;">—</td></tr>';
 
+  reapplySorts();
   renderDetail(data);
   updateChart(data);
   updatePieChart(data);
@@ -1329,13 +1394,15 @@ function renderMatrix(data) {
   if (!table) return;
 
   if (!data.length) {
-    table.innerHTML = '<tr><td colspan="5" class="muted" style="text-align:center;">Sin datos</td></tr>';
+    table.innerHTML = '<tr><td colspan="11" class="muted" style="text-align:center;">Sin datos</td></tr>';
     return;
   }
 
   const years = [...new Set(data.map(r => Number(r.year)))].filter(y=>!isNaN(y)).sort((a, b) => b - a);
   const currentYear = years[0];
-  const prevYear = years[1] || (currentYear - 1);
+  const hasPrev = years.length > 1;
+  const prevYear = hasPrev ? years[1] : (currentYear - 1);
+  const U = UNIT_PREFIX;
 
   const monthsCurr = new Array(12).fill(0);
   const monthsPrev = new Array(12).fill(0);
@@ -1353,14 +1420,15 @@ function renderMatrix(data) {
   const getQ = (arr, q) => arr.slice((q-1)*3, q*3).reduce((a, b) => a + b, 0);
   
   let maxMonthCurr = 0;
+  let found = false;
   for (let i = 11; i >= 0; i--) {
-    if (monthsCurr[i] > 0) { maxMonthCurr = i; break; }
+    if (monthsCurr[i] !== 0) { maxMonthCurr = i; found = true; break; }
   }
-  if (maxMonthCurr === 0 && monthsCurr[0] === 0) maxMonthCurr = 11;
+  if (!found) maxMonthCurr = 11;
 
   const ytdCurr = monthsCurr.slice(0, maxMonthCurr + 1).reduce((a, b) => a + b, 0);
   const ytdPrev = monthsPrev.slice(0, maxMonthCurr + 1).reduce((a, b) => a + b, 0);
-  const ytdGrowth = ytdPrev > 0 ? ((ytdCurr / ytdPrev) - 1) * 100 : 0;
+  const ytdGrowth = (hasPrev && ytdPrev > 0) ? ((ytdCurr / ytdPrev) - 1) * 100 : null;
 
   const q1Curr = getQ(monthsCurr, 1); const q1Prev = getQ(monthsPrev, 1);
   const q2Curr = getQ(monthsCurr, 2); const q2Prev = getQ(monthsPrev, 2);
@@ -1370,16 +1438,15 @@ function renderMatrix(data) {
   let html = `
     <thead>
       <tr>
-        <th>MES</th>
-        <th>${prevYear}</th>
-        <th>${currentYear}</th>
+        <th rowspan="2">MES</th>
+        <th rowspan="2">${prevYear}</th>
+        <th rowspan="2">${currentYear}</th>
         <th class="q-1" colspan="2">TRIMESTRE 1</th>
         <th class="q-2" colspan="2">TRIMESTRE 2</th>
         <th class="q-3" colspan="2">TRIMESTRE 3</th>
         <th class="q-4" colspan="2">TRIMESTRE 4</th>
       </tr>
       <tr>
-        <th></th><th></th><th></th>
         <th class="q-1">${prevYear}</th><th class="q-1">${currentYear}</th>
         <th class="q-2">${prevYear}</th><th class="q-2">${currentYear}</th>
         <th class="q-3">${prevYear}</th><th class="q-3">${currentYear}</th>
@@ -1392,16 +1459,16 @@ function renderMatrix(data) {
   MONTHS.forEach((m, i) => {
     const isCurr = i <= maxMonthCurr;
     let qCells = '';
-    if (i === 0) qCells = `<td class="q-1" rowspan="3">$${fmt(q1Prev)}</td><td class="q-1" rowspan="3">$${fmt(q1Curr)}</td>`;
-    if (i === 3) qCells = `<td class="q-2" rowspan="3">$${fmt(q2Prev)}</td><td class="q-2" rowspan="3">$${fmt(q2Curr)}</td>`;
-    if (i === 6) qCells = `<td class="q-3" rowspan="3">$${fmt(q3Prev)}</td><td class="q-3" rowspan="3">$${fmt(q3Curr)}</td>`;
-    if (i === 9) qCells = `<td class="q-4" rowspan="3">$${fmt(q4Prev)}</td><td class="q-4" rowspan="3">$${fmt(q4Curr)}</td>`;
+    if (i === 0) qCells = `<td class="q-1" rowspan="3">${U}${fmt(q1Prev)}</td><td class="q-1" rowspan="3">${U}${fmt(q1Curr)}</td>`;
+    if (i === 3) qCells = `<td class="q-2" rowspan="3">${U}${fmt(q2Prev)}</td><td class="q-2" rowspan="3">${U}${fmt(q2Curr)}</td>`;
+    if (i === 6) qCells = `<td class="q-3" rowspan="3">${U}${fmt(q3Prev)}</td><td class="q-3" rowspan="3">${U}${fmt(q3Curr)}</td>`;
+    if (i === 9) qCells = `<td class="q-4" rowspan="3">${U}${fmt(q4Prev)}</td><td class="q-4" rowspan="3">${U}${fmt(q4Curr)}</td>`;
 
     html += `
       <tr>
         <td>${m}</td>
-        <td>$${fmt(monthsPrev[i])}</td>
-        <td>${isCurr ? '$' + fmt(monthsCurr[i]) : '-'}</td>
+        <td>${U}${fmt(monthsPrev[i])}</td>
+        <td>${isCurr ? U + fmt(monthsCurr[i]) : '-'}</td>
         ${qCells}
       </tr>
     `;
@@ -1410,10 +1477,12 @@ function renderMatrix(data) {
   html += `
       <tr class="ytd-row">
         <td>YTD (${MONTHS[maxMonthCurr]})</td>
-        <td>$${fmt(ytdPrev)}</td>
-        <td>$${fmt(ytdCurr)}</td>
-        <td colspan="6" style="text-align:center; font-size:14px;">
-          Crecimiento Real YTD: <span class="growth-pct ${ytdGrowth < 0 ? 'negative' : ''}">${ytdGrowth >= 0 ? '+' : ''}${ytdGrowth.toFixed(1)}%</span>
+        <td>${U}${fmt(ytdPrev)}</td>
+        <td>${U}${fmt(ytdCurr)}</td>
+        <td colspan="8" style="text-align:center; font-size:14px;">
+          Crecimiento real YTD: ${ytdGrowth === null
+            ? '<span class="muted">— sin año anterior para comparar</span>'
+            : `<span class="growth-pct ${ytdGrowth < 0 ? 'negative' : ''}">${ytdGrowth >= 0 ? '+' : ''}${ytdGrowth.toFixed(1)}%</span>`}
         </td>
       </tr>
     </tbody>
@@ -1500,11 +1569,28 @@ function updateChart(data) {
   const mode = modeEl ? modeEl.value : 'year';
 
   let datasets = [];
+  let labels = MONTHS;
   const groupConfig = { family:'SIN FAMILIA', cia:'SIN TIENDA', vendedor:'SIN VENDEDOR' };
 
   if (groupConfig[mode]) {
     const fallback = groupConfig[mode];
     const buckets = new Map();
+
+    // Eje X: si hay varios años, línea de tiempo continua (ENE-24 … DIC-25)
+    // para no sumar enero de un año con enero de otro.
+    const idxs = data.filter(r => r.month >= 1 && r.month <= 12)
+                     .map(r => Number(r.year) * 12 + Number(r.month) - 1);
+    const minI = idxs.length ? Math.min(...idxs) : 0;
+    const maxI = idxs.length ? Math.max(...idxs) : 11;
+    const multiYear = Math.floor(minI / 12) !== Math.floor(maxI / 12);
+    const slots = multiYear ? (maxI - minI + 1) : 12;
+    const slotOf = r => multiYear ? (Number(r.year) * 12 + Number(r.month) - 1 - minI) : (r.month - 1);
+    if (multiYear) {
+      labels = Array.from({ length: slots }, (_, k) => {
+        const i = minI + k;
+        return `${MONTHS[i % 12]}-${String(Math.floor(i / 12)).slice(-2)}`;
+      });
+    }
 
     data.forEach(r => {
       if (!r.month || r.month < 1 || r.month > 12) return;
@@ -1512,10 +1598,11 @@ function updateChart(data) {
       if (mode === 'family') val = famGroup(val);
       else if (mode === 'vendedor') val = getVendor(r);
       const key = (val && String(val).trim()) || fallback;
-      if (!buckets.has(key)) buckets.set(key, { total:0, months:new Array(12).fill(null) });
+      if (!buckets.has(key)) buckets.set(key, { total:0, months:new Array(slots).fill(null) });
       const b = buckets.get(key);
+      const s = slotOf(r);
       b.total += r.value;
-      b.months[r.month - 1] = (b.months[r.month - 1] || 0) + r.value;
+      b.months[s] = (b.months[s] || 0) + r.value;
     });
 
     const sorted = [...buckets.entries()].sort((a, b) => b[1].total - a[1].total);
@@ -1570,7 +1657,7 @@ function updateChart(data) {
 
   chartInstance = new Chart(ctx, {
     type: 'line',
-    data: { labels: MONTHS, datasets },
+    data: { labels, datasets },
     options: {
       responsive: true, maintainAspectRatio: false,
       interaction: { mode:'nearest', intersect:false },
@@ -1608,11 +1695,10 @@ function updatePieChart(data) {
   const canvas = document.getElementById('pieChart');
   if (!canvas) return;
 
+  // Si el panel está oculto no se reintenta: setPanelVisible() vuelve a
+  // renderizar al mostrarlo (antes se creaba un setTimeout infinito por render).
   const rect = canvas.getBoundingClientRect();
-  if (rect.width === 0 || rect.height === 0) {
-    setTimeout(() => updatePieChart(data), 200);
-    return;
-  }
+  if (rect.width === 0 || rect.height === 0) return;
 
   if (pieInstance) { pieInstance.destroy(); pieInstance = null; }
   if (!data.length) return;
@@ -1706,6 +1792,13 @@ function updateCiaOptions() {
     : 'Todos';
 }
 
+/* Asigna un valor a un select; si la opción no existe vuelve a "Todos"
+   (antes quedaba en '' y filtraba todos los registros). */
+function setSelectSafe(el, v) {
+  el.value = v;
+  if (el.tagName === 'SELECT' && el.selectedIndex === -1) el.selectedIndex = 0;
+}
+
 function populateFilters() {
   // 1) Año (primero)
   const yearSelect = document.getElementById('year');
@@ -1748,9 +1841,19 @@ function populateFilters() {
     }
   }
 
-  // 3) Cargar persistidos y refrescar cascada de Cía
+  // 3) Cargar persistidos: primero el año, luego construir Tienda según el año
+  //    y entonces restaurar Tienda (antes se perdía porque aún no tenía opciones).
   loadFilters();
   updateCiaOptions();
+  const savedCia = getSavedFilter('cia');
+  if (savedCia) setSelectSafe(document.getElementById('cia'), savedCia);
+}
+
+function getSavedFilter(id) {
+  try {
+    const f = JSON.parse(localStorage.getItem(STORAGE_PREFIX + 'filters') || '{}');
+    return f[id];
+  } catch(e) { return undefined; }
 }
 
 function saveFilters() {
@@ -1768,7 +1871,7 @@ function loadFilters() {
     const f = JSON.parse(raw);
     ['year','cia','line','family','grupo','vendedor','sku','search','trendGroup'].forEach(id => {
       const el = document.getElementById(id);
-      if (el && f[id] !== undefined) el.value = f[id];
+      if (el && f[id] !== undefined) setSelectSafe(el, f[id]);
     });
   } catch(e){}
 }
@@ -2040,7 +2143,6 @@ document.getElementById('year').addEventListener('change', () => {
 // Resto de filtros (no cascada)
 ['cia','line','family','grupo','vendedor','sku'].forEach(id => {
   const el = document.getElementById(id);
-  el.addEventListener('input', () => { detailPage = 1; render(); saveFilters(); });
   el.addEventListener('change', () => { detailPage = 1; render(); saveFilters(); });
 });
 
@@ -2080,26 +2182,36 @@ document.querySelectorAll('#viewMenu input[data-panel]').forEach(cb => {
 });
 
 /* Pagination */
-document.getElementById('pageSize').addEventListener('change', () => { detailPage = 1; render(); });
-document.getElementById('prevPage').addEventListener('click', () => { detailPage--; render(); });
-document.getElementById('nextPage').addEventListener('click', () => { detailPage++; render(); });
+// Solo se vuelve a dibujar la tabla de detalle, no todo el dashboard
+document.getElementById('pageSize').addEventListener('change', () => { detailPage = 1; renderDetail(getFiltered()); });
+document.getElementById('prevPage').addEventListener('click', () => { detailPage--; renderDetail(getFiltered()); });
+document.getElementById('nextPage').addEventListener('click', () => { detailPage++; renderDetail(getFiltered()); });
 
-/* Sort tables */
+/* Sort tables (el orden elegido se conserva al volver a renderizar) */
+function sortTableBy(th, dir) {
+  const isValue = th.dataset.sort === 'value';
+  const colIndex = th.cellIndex;
+  const table = th.closest('table');
+  const tbody = table.querySelector('tbody');
+  const rows = Array.from(tbody.querySelectorAll('tr'));
+  if (rows.length < 2) return;
+  table.querySelectorAll('th[data-sort]').forEach(h => { if (h !== th) delete h.dataset.dir; });
+  th.dataset.dir = dir === 1 ? 'asc' : 'desc';
+  rows.sort((a,b) => {
+    const aV = a.querySelectorAll('td')[colIndex]?.textContent.trim() || '';
+    const bV = b.querySelectorAll('td')[colIndex]?.textContent.trim() || '';
+    return isValue ? dir * (num(aV) - num(bV)) : dir * aV.localeCompare(bV, 'es');
+  });
+  rows.forEach(r => tbody.appendChild(r));
+}
+function reapplySorts() {
+  document.querySelectorAll('th[data-sort][data-dir]').forEach(th => {
+    sortTableBy(th, th.dataset.dir === 'asc' ? 1 : -1);
+  });
+}
 document.querySelectorAll('th[data-sort]').forEach(th => {
   th.addEventListener('click', function() {
-    const key = this.dataset.sort;
-    const isValue = key === 'value';
-    const colIndex = this.cellIndex;
-    const tbody = this.closest('table').querySelector('tbody');
-    const rows = Array.from(tbody.querySelectorAll('tr'));
-    const dir = this.dataset.dir === 'asc' ? -1 : 1;
-    this.dataset.dir = dir === 1 ? 'asc' : 'desc';
-    rows.sort((a,b) => {
-      const aV = a.querySelectorAll('td')[colIndex]?.textContent.trim() || '';
-      const bV = b.querySelectorAll('td')[colIndex]?.textContent.trim() || '';
-      return isValue ? dir * (num(aV) - num(bV)) : dir * aV.localeCompare(bV, 'es');
-    });
-    rows.forEach(r => tbody.appendChild(r));
+    sortTableBy(this, this.dataset.dir === 'asc' ? -1 : 1);
   });
 });
 
